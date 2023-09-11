@@ -1,0 +1,20 @@
+@startuml
+
+class GameControl {}
+class GameLog {}
+class Grid {}
+class Match {}
+class Player {}
+class Ship {}
+class UserInterface {}
+
+GameControl <-- GameLog
+GameControl <-- Match
+GameControl o-- Player
+GameControl <-- UserInterface
+
+Match <-- Grid
+
+Grid <-- Ship
+
+@enduml

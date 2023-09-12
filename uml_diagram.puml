@@ -1,0 +1,62 @@
+@startuml battleship_class_diagram
+
+class GameControl {
+    - players :: Player[]
+    - match :: Match
+    - ui :: UserInteface
+    + __init__()
+    + start()
+    + add_user(name)
+    + del_user(name)
+    + view_scores()
+}
+
+class Grid {
+    - height :: int
+    - width :: int
+    - ships :: Ship[]
+    - shots :: [][]
+    + place_ship(ship)
+    + check_hit(coord)
+    + check_defeat()
+}
+class Match {
+    - player_list :: Player[]
+    - ui :: UserInterface
+    - players :: (Player, Player) {field} 
+    - grids :: (Grid, Grid) {field}
+    + __init__(player_list, ui)
+    + main_loop()
+    + turn()
+}
+class Player {
+    - name :: str
+    - score :: int
+    + name()
+    + name(new_name)
+    + score()
+    + inc_score(points)
+}
+
+class Ship {
+    - shape :: bool[][]
+    - orientation :: int
+    - position :: (int, int) {field}
+    - sunk :: bool
+    + check_hit(coord)
+    + check_sunk()
+}
+
+class GameLog {}
+class UserInterface {}
+
+GameControl <-- GameLog
+GameControl <-- Match
+GameControl o-- Player
+GameControl <-- UserInterface
+
+Match <-- Grid
+
+Grid <-- Ship
+
+@enduml

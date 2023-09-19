@@ -1,13 +1,17 @@
 @startuml battleship_class_diagram
 
+skinparam classAttributeIconSize 0
+left to right direction
+hide circle
+
 class GameControl {
     - players :: Player[]
     - match :: Match
     - ui :: UserInteface
     + __init__()
     + start()
-    + add_user(name)
-    + del_user(name)
+    + add_user(str)
+    + del_user(str)
     + view_scores()
 }
 
@@ -25,17 +29,19 @@ class Match {
     - ui :: UserInterface
     - players :: (Player, Player) {field} 
     - grids :: (Grid, Grid) {field}
-    + __init__(player_list, ui)
+    + __init__(Player[], UserInterface)
     + main_loop()
     + turn()
 }
-class Player {
+abstract class Player {
     - name :: str
     - score :: int
+    + __init__() {abstract}
     + name()
-    + name(new_name)
+    + name(str)
     + score()
-    + inc_score(points)
+    + add_score(int)
+    + play_move() {abstract}
 }
 
 class Ship {
@@ -49,12 +55,18 @@ class Ship {
 
 class GameLog {}
 class UserInterface {}
+class HumanPlayer {}
+class ComputerPlayer {}
 
 GameControl <-- GameLog
-GameControl <-- Match
-GameControl o-- Player
 GameControl <-- UserInterface
 
+Player o-- GameControl
+
+HumanPlayer --|> Player
+ComputerPlayer --|> Player
+
+Match --> GameControl
 Match <-- Grid
 
 Grid <-- Ship

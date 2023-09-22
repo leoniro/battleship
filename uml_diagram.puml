@@ -5,15 +5,21 @@ left to right direction
 hide circle
 
 class GameControl {
-    - players :: Player[]
-    - match :: Match
-    - ui :: UserInteface
+    - player_control :: PlayerControl
+    - game :: Game
     + __init__()
     + start()
-    + add_user(str)
-    + del_user(str)
     + view_scores()
 }
+
+class PlayerControl {
+    - players :: Player[]
+    + add()
+    + list()
+    + modify()
+    + remove()
+}
+
 
 class Grid {
     - height :: int
@@ -24,7 +30,7 @@ class Grid {
     + check_hit(coord)
     + check_defeat()
 }
-class Match {
+class Game {
     - player_list :: Player[]
     - ui :: UserInterface
     - players :: (Player, Player) {field} 
@@ -53,22 +59,23 @@ class Ship {
     + check_sunk()
 }
 
-class GameLog {}
-class UserInterface {}
 class HumanPlayer {}
 class ComputerPlayer {}
 
-GameControl <-- GameLog
-GameControl <-- UserInterface
-
-Player o-- GameControl
+PlayerControl <-- GameControl
+Player <-- PlayerControl
+PlayerView <-- PlayerControl
 
 HumanPlayer --|> Player
 ComputerPlayer --|> Player
 
-Match --> GameControl
-Match <-- Grid
-
-Grid <-- Ship
+GameControl <-- Game
+GameControl <-- GameView
+Game <-- GridControl
+GridControl <-- Grid
+GridControl <-- GridView
+Grid <-- ShipControl
+ShipControl <-- Ship
+ShipControl <-- ShipView
 
 @enduml

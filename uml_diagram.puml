@@ -1,7 +1,7 @@
 @startuml battleship_class_diagram
 
 skinparam classAttributeIconSize 0
-left to right direction
+'left to right direction
 hide circle
 
 class GameControl {
@@ -31,10 +31,8 @@ class Grid {
     + check_defeat()
 }
 class Game {
-    - player_list :: Player[]
-    - ui :: UserInterface
-    - players :: (Player, Player) {field} 
-    - grids :: (Grid, Grid) {field}
+    - player_list :: Player[] 
+    - grid_control :: GridControl
     + __init__(Player[], UserInterface)
     + main_loop()
     + turn()
@@ -62,7 +60,7 @@ class Ship {
 class HumanPlayer {}
 class ComputerPlayer {}
 
-PlayerControl <-- GameControl
+PlayerControl --> GameControl
 Player <-- PlayerControl
 PlayerView <-- PlayerControl
 

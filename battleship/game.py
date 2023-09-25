@@ -1,6 +1,6 @@
 from grid import Grid
 
-class Match:
+class Game:
     def __init__(self, player1, player2, h, w, ui):
         self.__ui = ui
         self.__players = (player1, player2)

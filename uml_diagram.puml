@@ -6,37 +6,74 @@ hide circle
 
 class GameControl {
     - player_control :: PlayerControl
-    - game :: Game
+    - game_history :: Game[]
+    - game_view :: GameView
     + __init__()
-    + start()
-    + view_scores()
+    + start(player1, player2)
 }
 
-class PlayerControl {
-    - players :: Player[]
-    + add()
-    + list()
-    + modify()
-    + remove()
+class Game {
+    - players :: Player[] 
+    - grid_control :: GridControl
+    + __init__(Player[], UserInterface)
+    + set_size()
+    + turn()
+}
+
+class GameView {
+
 }
 
 
-class Grid {
+class GridControl {
     - height :: int
     - width :: int
+    - grids :: (Grid, Grid) {field}
+    - __init__()
+    - set_size()
+    - create_grid()
+}
+
+class Grid {
     - ships :: Ship[]
     - shots :: [][]
     + place_ship(ship)
     + check_hit(coord)
     + check_defeat()
 }
-class Game {
-    - player_list :: Player[] 
-    - grid_control :: GridControl
-    + __init__(Player[], UserInterface)
-    + main_loop()
-    + turn()
+
+class GridView {
+
 }
+
+class ShipControl{
+    - ships :: Ship[]
+    + place_ship()
+}
+
+class Ship {
+    - length :: int
+    - orientation :: int
+    - position :: (int, int) {field}
+    - sunk :: bool
+    + __init__()
+    + check_hit(coord)
+    + check_sunk()
+}
+
+class ShipView {
+
+}
+
+class PlayerControl {
+    - players :: Player[]
+    - player_view :: PlayerView
+    + add()
+    + list()
+    + modify()
+    + remove()
+}
+
 abstract class Player {
     - name :: str
     - score :: int
@@ -44,36 +81,32 @@ abstract class Player {
     + name()
     + name(str)
     + score()
-    + add_score(int)
+    + score(int)
     + play_move() {abstract}
+    + place_ship() {abstract}
 }
 
-class Ship {
-    - shape :: bool[][]
-    - orientation :: int
-    - position :: (int, int) {field}
-    - sunk :: bool
-    + check_hit(coord)
-    + check_sunk()
+class PlayerView {
+
 }
 
 class HumanPlayer {}
 class ComputerPlayer {}
 
-PlayerControl --> GameControl
-Player <-- PlayerControl
-PlayerView <-- PlayerControl
+PlayerControl <-l- GameControl
+Player <-u- PlayerControl
+PlayerView <-u- PlayerControl
 
-HumanPlayer --|> Player
-ComputerPlayer --|> Player
+HumanPlayer -u-|> Player
+ComputerPlayer -u-|> Player
 
-GameControl <-- Game
-GameControl <-- GameView
-Game <-- GridControl
-GridControl <-- Grid
-GridControl <-- GridView
-Grid <-- ShipControl
-ShipControl <-- Ship
-ShipControl <-- ShipView
+GameControl -l-> Game
+GameControl --> GameView
+Game --> GridControl
+GridControl --> Grid
+GridControl --> GridView
+Grid --> ShipControl
+ShipControl --> Ship
+ShipControl --> ShipView
 
 @enduml

@@ -9,19 +9,20 @@ class GameControl {
     - game_history :: Game[]
     - game_view :: GameView
     + __init__()
-    + start(player1, player2)
+    + new_game()
+    + manage_players()
 }
 
 class Game {
     - players :: Player[] 
     - grid_control :: GridControl
-    + __init__(Player[], UserInterface)
+    + __init__(player1, player2)
     + set_size()
     + turn()
 }
 
 class GameView {
-
+    + __init__()
 }
 
 
@@ -29,40 +30,46 @@ class GridControl {
     - height :: int
     - width :: int
     - grids :: (Grid, Grid) {field}
-    - __init__()
-    - set_size()
-    - create_grid()
+    - grid_view :: GridView
+    + __init__()
+    + manage_ships()
+    + start_placement()
 }
 
 class Grid {
-    - ships :: Ship[]
-    - shots :: [][]
-    + place_ship(ship)
+    - ships_control :: ShipControl
+    - shots :: str[]
+    + __init__()
+    + place_ship()
     + check_hit(coord)
     + check_defeat()
+    + index(coord)
 }
 
 class GridView {
-
+    + __init__()
 }
 
 class ShipControl{
     - ships :: Ship[]
+    + __init__()
     + place_ship()
+    + check_collision(coord)
 }
 
 class Ship {
-    - length :: int
+    - shape :: bool[][]
     - orientation :: int
     - position :: (int, int) {field}
     - sunk :: bool
+    - hits :: bool[][]
     + __init__()
     + check_hit(coord)
     + check_sunk()
 }
 
 class ShipView {
-
+    + __init__()
 }
 
 class PlayerControl {
@@ -87,14 +94,16 @@ abstract class Player {
 }
 
 class PlayerView {
-
+    + __init__()
 }
 
-class HumanPlayer {}
+class HumanPlayer {
+    - player_control :: PlayerControl
+}
 class ComputerPlayer {}
 
-PlayerControl <-l- GameControl
-Player <-u- PlayerControl
+PlayerControl <-u- GameControl
+Player <-u-> PlayerControl
 PlayerView <-u- PlayerControl
 
 HumanPlayer -u-|> Player

@@ -30,6 +30,7 @@ class GameView {
     + new_game()
     + menu(text, options)
     + msg(text)
+    + get_intput(filter)
 }
 
 class Grid {
@@ -63,11 +64,16 @@ class ShipCtrl{
 
 class ShipView {
     + __init__()
+    + menu(text, options)
+    + msg(text)
+    + get_intput(filter)
+    
 }
 
 class PlayerCtrl {
     - players :: Player[]
     - player_view :: PlayerView
+    + __init__()
     + add()
     + list()
     + modify()
@@ -88,28 +94,40 @@ abstract class Player {
 
 class PlayerView {
     + __init__()
+    + menu(text, options)
+    + msg(text)
+    + get_intput(filter)
 }
 
-class HumanPlayer {}
-class ComputerPlayer {}
+class HumanPlayer {
+    + __init__()
+    + play_move()
+    + place_ship()
+}
+class ComputerPlayer {
+    + __init__()
+    + play_move()
+    + place_ship()
+}
 
-GameCtrl --> PlayerCtrl
-Player <-- PlayerCtrl
-PlayerCtrl <-- PlayerView
 
-GameCtrl  --> ShipCtrl
+GameCtrl "1" <--> "1..*" Game : game_history <
+GameCtrl "1" --> "1" GameView : game_view <
+GameCtrl "1" --> "1" PlayerCtrl : player_ctrl <
+GameCtrl "1" --> "1" ShipCtrl : ship_ctrl <
 
-Game --> Player
+PlayerCtrl "1" --> "1..*" Player : players <
+PlayerCtrl "1" --> "1" PlayerView : player_view <
+
+Game "1" --> "2" Player : players <
 
 Player <|-- HumanPlayer
 Player <|-- ComputerPlayer
 
-GameCtrl <--> Game
-GameCtrl --> GameView
-Game --* Grid
+Game "1" --* "2" Grid : grids <
 
-ShipCtrl --> Ship
-ShipCtrl --> ShipView
-Grid --> Ship
+ShipCtrl "1" --> "1..*" Ship : ships <
+ShipCtrl "1" --> "1" ShipView : ship_view <
+Grid "1" --> "1..*" Ship : ships <
 
 @enduml

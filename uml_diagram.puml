@@ -4,75 +4,68 @@ skinparam classAttributeIconSize 0
 'left to right direction
 hide circle
 
-class GameControl {
-    - player_control :: PlayerControl
+class Game {
+    - game_control :: GameControl
+    - players :: (Player, Player) {field}
+    - grids :: (Grid, Grid) {field}
+    + __init__(player1, player2)
+    + turn()
+}
+
+class GameCtrl {
+    - player_ctrl :: PlayerCtrl
+    - ship_ctrl :: ShipCtrl
     - game_history :: Game[]
     - game_view :: GameView
     + __init__()
     + new_game()
     + manage_players()
-}
-
-class Game {
-    - players :: Player[] 
-    - grid_control :: GridControl
-    + __init__(player1, player2)
-    + set_size()
-    + turn()
+    + manage_ships()
+    + player_ranking()
+    + previous_games()
 }
 
 class GameView {
     + __init__()
-}
-
-
-class GridControl {
-    - height :: int
-    - width :: int
-    - grids :: (Grid, Grid) {field}
-    - grid_view :: GridView
-    + __init__()
-    + manage_ships()
-    + start_placement()
+    + new_game()
+    + menu(text, options)
+    + msg(text)
 }
 
 class Grid {
-    - ships_control :: ShipControl
+    - ships = Ships[]
     - shots :: str[]
     + __init__()
-    + place_ship()
+    + place_ships()
     + check_hit(coord)
     + check_defeat()
-    + index(coord)
-}
-
-class GridView {
-    + __init__()
-}
-
-class ShipControl{
-    - ships :: Ship[]
-    + __init__()
-    + place_ship()
-    + check_collision(coord)
 }
 
 class Ship {
-    - shape :: bool[][]
+    - length :: int
     - orientation :: int
     - position :: (int, int) {field}
     - sunk :: bool
-    - hits :: bool[][]
+    - hits :: bool[]
     + __init__()
     + check_hit(coord)
     + check_sunk()
+}
+
+class ShipCtrl{
+    - ships :: Ship[]
+    + __init__()
+    + add()
+    + list()
+    + modify()
+    + remove()
 }
 
 class ShipView {
     + __init__()
 }
 
-class PlayerControl {
+class PlayerCtrl {
     - players :: Player[]
     - player_view :: PlayerView
     + add()
@@ -97,25 +90,26 @@ class PlayerView {
     + __init__()
 }
 
-class HumanPlayer {
-    - player_control :: PlayerControl
-}
+class HumanPlayer {}
 class ComputerPlayer {}
 
-PlayerControl <-u- GameControl
-Player <-u-> PlayerControl
-PlayerView <-u- PlayerControl
+GameCtrl --> PlayerCtrl
+Player <-- PlayerCtrl
+PlayerCtrl <-- PlayerView
 
-HumanPlayer -u-|> Player
-ComputerPlayer -u-|> Player
+GameCtrl  --> ShipCtrl
 
-GameControl -l-> Game
-GameControl --> GameView
-Game --> GridControl
-GridControl --> Grid
-GridControl --> GridView
-Grid --> ShipControl
-ShipControl --> Ship
-ShipControl --> ShipView
+Game --> Player
+
+Player <|-- HumanPlayer
+Player <|-- ComputerPlayer
+
+GameCtrl <--> Game
+GameCtrl --> GameView
+Game --* Grid
+
+ShipCtrl --> Ship
+ShipCtrl --> ShipView
+Grid --> Ship
 
 @enduml

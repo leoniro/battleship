@@ -1,0 +1,57 @@
+@startuml battleship_class_diagram
+
+skinparam classAttributeIconSize 0
+'left to right direction
+hide circle
+
+abstract class View {
+    + __init__() {abstract}
+    + menu(text, options) {abstract}
+    + msg(text) {abstract}
+    + get_intput(validator) {abstract}
+}
+
+class GameView {
+    + __init__()
+    + new_game()
+}
+
+class ShipView {
+    + __init__()
+}
+
+class PlayerView {
+    + __init__()
+}
+
+abstract class Player {
+    - name :: str
+    - score :: int
+    + __init__() {abstract}
+    + name()
+    + name(str)
+    + score()
+    + score(int)
+    + play_move() {abstract}
+    + place_ship() {abstract}
+}
+
+class HumanPlayer {
+    + __init__()
+    + play_move()
+    + place_ship()
+}
+class ComputerPlayer {
+    + __init__()
+    + play_move()
+    + place_ship()
+}
+
+Player <|-- HumanPlayer
+Player <|-- ComputerPlayer
+
+View <|-- ShipView
+View <|-- GameView
+View <|-- PlayerView
+
+@enduml

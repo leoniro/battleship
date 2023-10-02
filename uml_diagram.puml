@@ -5,11 +5,22 @@ skinparam classAttributeIconSize 0
 hide circle
 
 class Game {
-    - game_control :: GameControl
+    - game_ctrl :: GameCtrl
     - players :: (Player, Player) {field}
     - grids :: (Grid, Grid) {field}
-    + __init__(player1, player2)
-    + turn()
+    - height :: int
+    - width :: int
+    - move_list :: (int, str)[] {field}
+    + __init__(game_ctrl, h, w,
+            player1, player2, ships_copy)
+    + game_ctrl()
+    + players()
+    + grids()
+    + height()
+    + width()
+    + move_list()
+    + turn(player)
+    + log_move(player, coord)
 }
 
 class GameCtrl {
@@ -18,6 +29,10 @@ class GameCtrl {
     - game_history :: Game[]
     - game_view :: GameView
     + __init__()
+    + player_ctrl()
+    + ship_ctrl()
+    + game_history()
+    + game_view()
     + new_game()
     + manage_players()
     + manage_ships()
@@ -28,27 +43,44 @@ class GameCtrl {
 class GameView {
     + __init__()
     + new_game()
+    + render_grid(matrix)
     + menu(text, options)
     + msg(text)
-    + get_intput(filter)
+    + get_intput(validator)
 }
 
 class Grid {
-    - ships = Ships[]
-    - shots :: str[]
-    + __init__()
+    - ships :: Ships[]
+    - matrix :: int[][]
+    - fog_of_war :: bool[][]
+    + __init__(h, w, ships_copy)
+    + ships()
+    + matrix()
+    + fog_of_war()
     + place_ships()
     + check_hit(coord)
     + check_defeat()
 }
 
 class Ship {
+    - name :: str
     - length :: int
     - orientation :: int
     - position :: (int, int) {field}
     - sunk :: bool
     - hits :: bool[]
     + __init__()
+    + name()
+    + name(new_name)
+    + length()
+    + length(new_length)
+    + orientation()
+    + orientation(new_orientation)
+    + position()
+    + position(new_position)
+    + sunk()
+    + sunk(is_sunk)
+    + hits()
     + check_hit(coord)
     + check_sunk()
 }
@@ -56,6 +88,7 @@ class Ship {
 class ShipCtrl{
     - ships :: Ship[]
     + __init__()
+    + ships()
     + add()
     + list()
     + modify()
@@ -66,7 +99,7 @@ class ShipView {
     + __init__()
     + menu(text, options)
     + msg(text)
-    + get_intput(filter)
+    + get_intput(validator)
     
 }
 
@@ -74,6 +107,8 @@ class PlayerCtrl {
     - players :: Player[]
     - player_view :: PlayerView
     + __init__()
+    + players()
+    + players_view()
     + add()
     + list()
     + modify()
@@ -83,7 +118,7 @@ class PlayerCtrl {
 abstract class Player {
     - name :: str
     - score :: int
-    + __init__() {abstract}
+    + __init__(name) {abstract}
     + name()
     + name(str)
     + score()
@@ -96,7 +131,7 @@ class PlayerView {
     + __init__()
     + menu(text, options)
     + msg(text)
-    + get_intput(filter)
+    + get_intput(validator)
 }
 
 class HumanPlayer {
@@ -111,9 +146,11 @@ class ComputerPlayer {
 }
 
 
-GameCtrl "1" <--> "1..*" Game : game_history <
-GameCtrl "1" --> "1" GameView : game_view <
-GameCtrl "1" --> "1" PlayerCtrl : player_ctrl <
+GameCtrl "1" --> "1..*" Game : game_history <
+GameCtrl "1" <-- "1..*" Game : game_control <
+GameCtrl "1" -r-> "1" GameView : game_view <
+
+GameCtrl "1" -l-> "1" PlayerCtrl : player_ctrl <
 GameCtrl "1" --> "1" ShipCtrl : ship_ctrl <
 
 PlayerCtrl "1" --> "1..*" Player : players <

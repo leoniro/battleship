@@ -147,7 +147,7 @@ class ComputerPlayer {
 
 
 GameCtrl "1" --> "1..*" Game : game_history <
-GameCtrl "1" <-- "1..*" Game : game_control <
+GameCtrl "1" <-- "1..*" Game : game_ctrl >
 GameCtrl "1" -r-> "1" GameView : game_view <
 
 GameCtrl "1" -l-> "1" PlayerCtrl : player_ctrl <
@@ -161,10 +161,10 @@ Game "1" --> "2" Player : players <
 Player <|-- HumanPlayer
 Player <|-- ComputerPlayer
 
-Game "1" --* "2" Grid : grids <
+Game "1" *-- "2" Grid : grids <
 
-ShipCtrl "1" --> "1..*" Ship : ships <
+ShipCtrl "1" --> "1..10" Ship : ships <
 ShipCtrl "1" --> "1" ShipView : ship_view <
-Grid "1" --> "1..*" Ship : ships <
+Grid "1" --> "1..10" Ship : ships <
 
 @enduml

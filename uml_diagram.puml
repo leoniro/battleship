@@ -7,7 +7,7 @@ hide circle
 class Game {
     - game_ctrl :: GameCtrl
     - players :: (Player, Player) {field}
-    - grids :: (Grid, Grid) {field}
+    - battlespaces :: (Battlespace, Battlespace) {field}
     - height :: int
     - width :: int
     - move_list :: (int, str)[] {field}
@@ -15,7 +15,7 @@ class Game {
             player1, player2, ships_copy)
     + game_ctrl()
     + players()
-    + grids()
+    + battlespaces()
     + height()
     + width()
     + move_list()
@@ -49,15 +49,14 @@ class GameView {
     + get_intput(validator)
 }
 
-class Grid {
+class Battlespace {
     - ships :: Ships[]
-    - matrix :: int[][]
+    - grid :: int[][]
     - fog_of_war :: bool[][]
     + __init__(h, w, ships_copy)
     + ships()
-    + matrix()
+    + grid()
     + fog_of_war()
-    + place_ships()
     + check_hit(coord)
     + check_defeat()
 }
@@ -123,8 +122,8 @@ abstract class Player {
     + name(str)
     + score()
     + score(int)
-    + play_move() {abstract}
-    + place_ship() {abstract}
+    + play_move(grid, game_ctrl) {abstract}
+    + place_ship(game_ctrl) {abstract}
 }
 
 class PlayerView {
@@ -135,14 +134,14 @@ class PlayerView {
 }
 
 class HumanPlayer {
-    + __init__()
-    + play_move()
-    + place_ship()
+    + __init__(name)
+    + play_move(grid, game_ctrl)
+    + place_ship(game_ctrl)
 }
 class ComputerPlayer {
-    + __init__()
-    + play_move()
-    + place_ship()
+    + __init__(name)
+    + play_move(grid, game_ctrl)
+    + place_ship(game_ctrl)
 }
 
 
@@ -161,10 +160,10 @@ Game "1" --> "2" Player : players <
 Player <|-- HumanPlayer
 Player <|-- ComputerPlayer
 
-Game "1" *-- "2" Grid : grids <
+Game "1" *-- "2" Battlespace : battlespaces <
 
 ShipCtrl "1" --> "1..10" Ship : ships <
 ShipCtrl "1" --> "1" ShipView : ship_view <
-Grid "1" --> "1..10" Ship : ships <
+Battlespace "1" --> "1..10" Ship : ships <
 
 @enduml

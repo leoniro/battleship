@@ -1,0 +1,55 @@
+import copy
+from battlespace import Battlespace
+
+class Game:
+    def __init__(self, game_ctrl, h, w, player1,
+                 player2, ships):
+        self.__game_ctrl = game_ctrl
+        self.__players = (player1, player2)
+        self.__battlespaces = (Battlespace(h, w, ships),
+                               Battlespace(h, w, ships))
+        self.__height = h
+        self.__width = w
+        self.__move_list = []
+
+    @property
+    def game_ctrl(self):
+        return self.__game_ctrl
+
+    @property
+    def players(self):
+        return self.__players
+
+    @property
+    def battlespaces(self):
+        return self.__battlespaces
+
+    @property
+    def height(self):
+        return self.__height
+
+    @property
+    def width(self):
+        return self.__width
+
+    @property
+    def move_list(self):
+        return self.__move_list
+
+    def turn(self, player_idx):
+        attacker = player_idx
+        defender = 1 if player_idx == 0 else 0
+        is_valid = False
+        while not is_valid:
+            coord = self.players(attacker).play_move()
+            is_hit, is_valid = self.battlespaces[defender].check_hit(coord)
+        self.log_move(attacker, coord)
+        if is_hit:
+            if self.battlespaces[defender].check_defeat():
+                return attacker
+            return self.turn(attacker)
+        else:
+            return self.turn(defender)
+
+    def log_move(self, player_idx, coord):
+        self.move_list.append( (player_idx, coord) )

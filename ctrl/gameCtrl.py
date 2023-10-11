@@ -3,7 +3,7 @@ from ctrl.shipCtrl import ShipCtrl
 from view.gameView import GameView
 
 
-class gameControl:
+class GameCtrl:
     def __init__(self):
         self.__player_ctrl = PlayerCtrl()
         self.__ship_ctrl = ShipCtrl()

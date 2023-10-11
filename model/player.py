@@ -1,9 +1,10 @@
 from abc import ABC, abstractmethod
-
+from model.battlespace import Battlespace
+from ctrl.gameCtrl import gameCtrl
 
 class Player(ABC):
     @abstractmethod
-    def __init__(self, name):
+    def __init__(self, name: str):
         self.__name = name
         self.__score = 0
 
@@ -24,9 +25,9 @@ class Player(ABC):
         self.__score += score
 
     @abstractmethod
-    def play_move(self, grid, game_ctrl):
+    def play_move(self, grid: list(list(int)), game_ctrl: GameCtrl):
         pass
 
     @abstractmethod
-    def place_ship(self, game_ctrl):
+    def place_ship(self, battlespace: Battlespace, game_ctrl: GameCtrl):
         pass

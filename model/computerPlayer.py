@@ -1,9 +1,9 @@
-from model.player import Player
+from model.abstractPlayer import AbstractPlayer
 from model.battlespace import Battlespace
 from ctrl.gameCtrl import GameCtrl
 
 
-class ComputerPlayer(Player):
+class ComputerPlayer(AbstractPlayer):
     def __init__(self, name: str):
         super().__init__(name)
 

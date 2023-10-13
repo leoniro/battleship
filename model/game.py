@@ -3,7 +3,7 @@ from exception.invalidCoordinateException import InvalidCoordinateException
 from battlespace import Battlespace
 from ctrl.gameCtrl import gameControl
 from view.gameView import GameView
-from model.player import Player
+from model.abstractPlayer import Player
 from model.ship import Ship
 
 class Game:
@@ -48,16 +48,17 @@ class Game:
 
     def turn(self, player_idx):
         attacker = player_idx
-        defender = 1 if player_idx == 0 else 0
+        defender = int(not attacker)
         is_valid = False
         while not is_valid:
             coord = self.players(attacker).play_move()
             try:
                 x, y = self.coord2idx(coord)
                 is_hit, is_valid = self.battlespaces[defender].check_hit(x, y)
-            finally:
-                if not is_valid:
-                    self.game_ctrl.game_view.msg("Coordenadas inválidas, tente novamente")
+            except:
+                pass
+            if not is_valid:
+                self.game_ctrl.game_view.msg("Coordenadas inválidas, tente novamente")
         self.log_move(attacker, coord)
         if is_hit:
             if self.battlespaces[defender].check_defeat():

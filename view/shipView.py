@@ -1,15 +1,15 @@
-from view.view import View
+from view.abstractView import AbstractView
 
 
-class GameView(View):
+class ShipeView(AbstractView):
     def __init__(self):
-        super().__init__()
+        self.__text = ""
+        self.__options = {}
 
-    def menu(self, text, options):
-        return super().menu(text, options)
+    @property
+    def text(self):
+        return self.__text
 
-    def msg(self, text):
-        return super().msg(text)
-
-    def get_input(self, validator):
-        return super().get_input(validator)
+    @property
+    def options(self):
+        return self.__options

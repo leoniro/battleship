@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 from model.battlespace import Battlespace
-from ctrl.gameCtrl import gameCtrl
+from ctrl.gameCtrl import GameCtrl
 
-class Player(ABC):
+class AbstractPlayer(ABC):
     @abstractmethod
     def __init__(self, name: str):
         self.__name = name

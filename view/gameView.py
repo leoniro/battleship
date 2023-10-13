@@ -1,21 +1,26 @@
-from view.view import View
+from view.abstractView import AbstractView
 
 
-class GameView(View):
+class GameView(AbstractView):
     def __init__(self):
-        super().__init__()
+        self.__text = "BATALHA NAVAL. Escolha uma opção:"
+        self.__options = {1: "Novo jogo",
+                   2: "Gerenciar Jogadores",
+                   3: "Gerencias Embarcações",
+                   4: "Ranking de Jogadores",
+                   5: "Histório de Partidas",
+                   0: "Sair"}
 
-    def menu(self, text, options):
-        return super().menu(text, options)
+    @property
+    def text(self):
+        return self.__text
 
-    def msg(self, text):
-        return super().msg(text)
-
-    def get_input(self, validator):
-        return super().get_input(validator)
+    @property
+    def options(self):
+        return self.__options
 
     def new_game(self):
         pass
 
-    def render(grid):
+    def render(self, grid):
         pass

@@ -25,7 +25,7 @@ class AbstractPlayer(ABC):
         self.__score += score
 
     @abstractmethod
-    def play_move(self, grid: list(list(int)), game_ctrl: GameCtrl):
+    def play_move(self, grid: list[list[int]], game_ctrl: GameCtrl):
         pass
 
     @abstractmethod

@@ -1,10 +1,8 @@
-import copy
 from exception.invalidCoordinateException import InvalidCoordinateException
 from battlespace import Battlespace
-from ctrl.gameCtrl import gameControl
-from view.gameView import GameView
-from model.abstractPlayer import Player
+#from model.abstractPlayer import Player
 from model.ship import Ship
+from ctrl.gameCtrl import gameControl
 
 class Game:
     def __init__(self,
@@ -13,7 +11,7 @@ class Game:
                  w: int,
                  player1: Player,
                  player2: Player,
-                 ships: list(Ship)):
+                 ships: list[Ship]):
         self.__game_ctrl = game_ctrl
         self.__players = (player1, player2)
         self.__battlespaces = (Battlespace(h, w, ships),

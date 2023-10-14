@@ -33,7 +33,7 @@ class GameCtrl:
         while True:
             self.game_view.menu(text, options)
             try:
-                choice = self.game_view.get_input(options)
+                choice = self.game_view.get_integer(options.keys())
             except:
                 self.game_view.msg("Opção inválida. Tente novamente\n")
                 continue

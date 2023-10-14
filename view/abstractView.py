@@ -14,16 +14,17 @@ class AbstractView(ABC):
     def msg(self, text: str):
         print(text)
 
-    def get_input(self, validator: dict[int, str] = None):
-        if validator == None:
-            return input()
-        else:
-            try:
-                data = input()
-                data = int(data)
-                if data in validator.keys():
-                    return data
-            except:
-                return None
-            raise InvalidInputException()
-                
+    def get_integer(self, validator = None):
+        try:
+            data = input()
+            data = int(data)
+            if validator == None:
+                return data
+            elif data in validator:
+                return data
+        except:
+            return None
+        raise InvalidInputException()
+
+    def get_input(self):
+        return input()

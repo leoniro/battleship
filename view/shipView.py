@@ -1,10 +1,15 @@
 from view.abstractView import AbstractView
 
 
-class ShipeView(AbstractView):
+class ShipView(AbstractView):
     def __init__(self):
-        self.__text = ""
-        self.__options = {}
+        self.__text = "Cadastro de embarcações"
+        self.__options = {
+            1: "Listar todos as embarcações",
+            2: "Adicionar nova embarcação",
+            3: "Excluir embarcação",
+            0: "Voltar"
+        }
 
     @property
     def text(self):

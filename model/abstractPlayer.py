@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
 from model.battlespace import Battlespace
+from ctrl.gameCtrl import GameCtrl
+
 
 class AbstractPlayer(ABC):
     @abstractmethod

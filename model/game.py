@@ -1,16 +1,16 @@
 from exception.invalidCoordinateException import InvalidCoordinateException
-from battlespace import Battlespace
-from model.abstractPlayer import Player
+from model.battlespace import Battlespace
+from model.abstractPlayer import AbstractPlayer
 from model.ship import Ship
-from ctrl.gameCtrl import gameControl
+from ctrl.gameCtrl import GameCtrl
 
 class Game:
     def __init__(self,
-                 game_ctrl: gameControl,
+                 game_ctrl: GameCtrl,
                  h: int,
                  w: int,
-                 player1: Player,
-                 player2: Player,
+                 player1: AbstractPlayer,
+                 player2: AbstractPlayer,
                  ships: list[Ship]):
         
         self.__game_ctrl = game_ctrl

@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 from model.battlespace import Battlespace
-from ctrl.gameCtrl import GameCtrl
 
 class AbstractPlayer(ABC):
     @abstractmethod
@@ -25,9 +24,9 @@ class AbstractPlayer(ABC):
         self.__score += score
 
     @abstractmethod
-    def play_move(self, grid: list[list[int]], game_ctrl: GameCtrl):
+    def play_move(self, grid: list[list[int]], game_ctrl):
         pass
 
     @abstractmethod
-    def place_ship(self, battlespace: Battlespace, game_ctrl: GameCtrl):
+    def place_ship(self, battlespace: Battlespace, game_ctrl):
         pass

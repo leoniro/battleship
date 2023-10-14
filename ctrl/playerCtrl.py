@@ -60,7 +60,7 @@ class PlayerCtrl:
                 if name in [p.name for p in self.players]:
                     self.player_view.msg("Jogador com esse nome já existe")
                     continue
-                self.player_types.msg("Tipo de jogador: 0 para humano, 1 para computador")
+                self.player_view.msg("Tipo de jogador: 0 para humano, 1 para computador")
                 try:
                     player_type = self.player_view.get_integer(range(len(self.player_types)))
                 except:

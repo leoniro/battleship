@@ -49,5 +49,5 @@ class Battlespace:
                 return False
         return True
 
-    def place_ship(self, coord):
+    def place_ship(self, x, y, o):
         """Try to place a ship at coord"""

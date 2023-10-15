@@ -58,34 +58,28 @@ class Game:
         defender = int(not attacker)
         is_valid = False
         while not is_valid:
-            coord = self.players[attacker].play_move()
             try:
-                x, y = self.coord2idx(coord)
+                x, y = self.players[attacker].play_move()
                 is_hit, is_valid = self.battlespaces[defender].check_hit(x, y)
             except Exception:
                 pass
             if not is_valid:
                 self.game_ctrl.game_view.msg("Coordenadas inválidas, tente novamente")
-        self.log_move(attacker, coord)
+        self.log_move(attacker, x, y)
         if is_hit:
             if self.battlespaces[defender].check_defeat():
                 return attacker
             return self.turn(attacker)
-        else:
-            return self.turn(defender)
+        return self.turn(defender)
 
-    def log_move(self, player_idx, coord):
+    def log_move(self, player_idx, x, y):
         """Add valid move do move history"""
+        coord = self.idx2coord(x,y)
         self.move_list.append( (player_idx, coord) )
 
-    def coord2idx(self, coord):
+    def idx2coord(self, x, y):
         """Convert string coordinate to integer pair"""
-        try:
-            x, y = coord.lower().split()
-            x = int(x) - 1
-            y = ord(y) - 97
-            if 0 <= x < len(self.width) and 0 <= y < len(self.height):
-                return x,y
-            raise InvalidCoordinateException("Coordenadas fora do tabuleiro")
-        except:
-            raise InvalidCoordinateException("Coordenadas inválidas")
+        x = x + 1
+        y = chr(y + 97)
+        coord = str(x) + ' ' + str(y)
+        return coord

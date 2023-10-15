@@ -93,9 +93,9 @@ class GameCtrl:
 
         for player_idx in range(2):
             self.game_view.msg(
-                f"\nJogador {game.players[player_idx]}: Posicione seus navios")
+                f"\nJogador {game.players[player_idx].name}: Posicione seus navios")
             self.game_view.msg(
-                'Formato: "<linha> <coluna> <orientação>",'
+                'Formato: "<linha> <coluna> <orientação>", '
                 'com orientação 0 para horizontal e 1 para vertical')
             for ship in game.battlespaces[player_idx].ships:
                 while True:
@@ -103,9 +103,9 @@ class GameCtrl:
                         self.game_view.render(game.battlespaces[player_idx].grid)
                         self.game_view.msg(
                             f"Posicione um(a) {ship.type}, de comprimento {ship.length()}:")
-                        coord = game.players[player_idx].place_ship(
-                            game.battlespaces[player_idx].grid)
-                        game.battlespaces[0].place_ship(coord)
+                        x, y, o = game.players[player_idx].place_ship(
+                            game.battlespaces[player_idx].grid, self)
+                        game.battlespaces[0].place_ship(x, y, o)
                         break
                     except Exception:
                         self.game_view.msg("Posição inválida, tente novamente")

@@ -5,6 +5,7 @@ from model.ship import Ship
 from ctrl.gameCtrl import GameCtrl
 
 class Game:
+    """class representing a single game match"""
     def __init__(self,
                  game_ctrl: GameCtrl,
                  h: int,
@@ -23,38 +24,45 @@ class Game:
 
     @property
     def game_ctrl(self):
+        """Game controller (to allow I/O)"""
         return self.__game_ctrl
 
     @property
     def players(self):
+        """Pair of players"""
         return self.__players
 
     @property
     def battlespaces(self):
+        """Pair of battlespaces"""
         return self.__battlespaces
 
     @property
     def height(self):
+        """Grid height"""
         return self.__height
 
     @property
     def width(self):
+        """Grid width"""
         return self.__width
 
     @property
     def move_list(self):
+        """History of all moves played"""
         return self.__move_list
 
     def turn(self, player_idx):
+        """Processes a single turn of gameplay"""
         attacker = player_idx
         defender = int(not attacker)
         is_valid = False
         while not is_valid:
-            coord = self.players(attacker).play_move()
+            coord = self.players[attacker].play_move()
             try:
                 x, y = self.coord2idx(coord)
                 is_hit, is_valid = self.battlespaces[defender].check_hit(x, y)
-            except:
+            except Exception:
                 pass
             if not is_valid:
                 self.game_ctrl.game_view.msg("Coordenadas inválidas, tente novamente")
@@ -67,14 +75,16 @@ class Game:
             return self.turn(defender)
 
     def log_move(self, player_idx, coord):
+        """Add valid move do move history"""
         self.move_list.append( (player_idx, coord) )
 
     def coord2idx(self, coord):
+        """Convert string coordinate to integer pair"""
         try:
             x, y = coord.lower().split()
             x = int(x) - 1
             y = ord(y) - 97
-            if 0 <= x < len(self.grid) and 0 <= y < len(self.grid[0]):
+            if 0 <= x < len(self.width) and 0 <= y < len(self.height):
                 return x,y
             raise InvalidCoordinateException("Coordenadas fora do tabuleiro")
         except:

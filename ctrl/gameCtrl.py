@@ -3,6 +3,7 @@ from view.gameView import GameView
 
 
 class GameCtrl:
+    """Game controller class"""
     def __init__(self):
         from ctrl.playerCtrl import PlayerCtrl
 
@@ -13,33 +14,36 @@ class GameCtrl:
 
     @property
     def player_ctrl(self):
+        """Returns player controller"""
         return self.__player_ctrl
 
     @property
     def ship_ctrl(self):
+        """Returns ship controller"""
         return self.__ship_ctrl
 
     @property
     def game_view(self):
+        """Returns game view"""
         return self.__game_view
 
     @property
     def game_history(self):
+        """Returns list of played games"""
         return self.__game_history
 
     def start(self):
-        # main menu
+        """Prints main menu and dispatches accordingly"""
         text = self.game_view.text
         options = self.game_view.options
         while True:
             self.game_view.menu(text, options)
             try:
                 choice = self.game_view.input_integer(options.keys())
-            except:
+            except Exception:
                 self.game_view.msg("Opção inválida. Tente novamente\n")
                 continue
             if choice == 0:
-                print(choice)
                 return
             elif choice == 1:
                 self.new_game()
@@ -53,6 +57,7 @@ class GameCtrl:
                 self.previous_games()
 
     def new_game(self):
+        """Set up a new game and start it"""
         from model.game import Game
 
         self.player_ctrl.list()
@@ -73,21 +78,25 @@ class GameCtrl:
         self.game_view.msg("Digite a altura do tabuleiro (10 a 20)")
         try:
             h = self.game_view.input_integer(range(10,21))
-        except:
+        except Exception:
             self.game_view.msg("Tamanho inválido")
+            return
         self.game_view.msg("Digite a largura do tabuleiro (10 a 20)")
         try:
-            w = self.game_view.input(range(10,21))
-        except:
+            w = self.game_view.input_integer(range(10,21))
+        except Exception:
             self.game_view.msg("Tamanho inválido")
-        
+            return
+
         game = Game(self, h, w, p1, p2, self.ship_ctrl.ships)
         self.game_history.append(game)
-        
+
         for player_idx in range(2):
-            self.game_view.msg(f"\nJogador {game.players[player_idx]}: Posicione seus navios")
-            self.game_view.msg(f'Formato: "<linha> <coluna> <orientação>", com orientação 0 para
-                               horizontal e 1 para vertical')
+            self.game_view.msg(
+                f"\nJogador {game.players[player_idx]}: Posicione seus navios")
+            self.game_view.msg(
+                'Formato: "<linha> <coluna> <orientação>",'
+                'com orientação 0 para horizontal e 1 para vertical')
             for ship in game.battlespaces[player_idx].ships:
                 while True:
                     try:
@@ -98,7 +107,7 @@ class GameCtrl:
                             game.battlespaces[player_idx].grid)
                         game.battlespaces[0].place_ship(coord)
                         break
-                    except:
+                    except Exception:
                         self.game_view.msg("Posição inválida, tente novamente")
                         continue
 
@@ -108,11 +117,9 @@ class GameCtrl:
             self.game_view.msg(f"{p1.name} venceu")
         else:
             self.game_view.msg(f"{p2.name} venceu")
-        
-        pass
 
     def player_ranking(self):
-        pass
+        """List all registered players according to their score"""
 
     def previous_games(self):
-        pass
+        """List previously played games"""

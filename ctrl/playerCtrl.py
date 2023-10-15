@@ -94,7 +94,7 @@ class PlayerCtrl:
     def add(self, name, player_type):
         self.players.append(self.player_types[player_type](name))
 
-    def list(self, term):
+    def list(self, term=""):
         self.player_view.msg("Tipo  Pts  Nome")
         for player in [p for p in self.players if (term in p.name)]:
             if isinstance(player, HumanPlayer):

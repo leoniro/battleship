@@ -24,7 +24,7 @@ class ShipCtrl():
             options = self.ship_view.options
             self.ship_view.menu(text, options)
             try:
-                choice = self.ship_view.get_integer(options.keys())
+                choice = self.ship_view.input_integer(options.keys())
             except:
                 self.game_view.msg("Opção inválida. Tente novamente\n")
                 continue
@@ -35,7 +35,7 @@ class ShipCtrl():
             elif choice == 2:
                 self.ship_view.msg("Escolha o comprimento da embarcação (1 a 4):")
                 try:
-                    length = self.ship_view.get_integer(range(1,5))
+                    length = self.ship_view.input_integer(range(1,5))
                     self.add(length)
                 except:
                     self.ship_view.msg("Não foi possível adicionar")
@@ -44,7 +44,7 @@ class ShipCtrl():
                 self.list()
                 self.ship_view.msg("Digite o Id da embarcação a ser removida")
                 try:
-                    id = self.ship_view.get_integer(range(len(self.ships)))
+                    id = self.ship_view.input_integer(range(len(self.ships)))
                     self.remove(id)
                     self.ship_view.msg("Removido com sucesso")
                 except:

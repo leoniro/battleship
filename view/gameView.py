@@ -19,8 +19,15 @@ class GameView(AbstractView):
     def options(self):
         return self.__options
 
-    def new_game(self):
-        pass
-
     def render(self, grid):
-        pass
+        letters = 'abcdefghijklmnopqrst'
+        print('  ', end = '')
+        for i in range(len(grid[0])):
+            print(f'{letters[i]:>2}', end = '')
+        print('')
+        for line_num, line in enumerate(grid):
+            print(f'{line_num:>2}', end = '')
+            for c in line:
+                print(f'{c:>2}', end = '')
+            print('')
+            

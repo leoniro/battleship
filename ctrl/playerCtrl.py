@@ -4,7 +4,7 @@ from model.computerPlayer import ComputerPlayer
 
 class PlayerCtrl:
     def __init__(self):
-        self.__players = []
+        self.__players = [ComputerPlayer("Computador"), HumanPlayer("Humano")]
         self.__player_view = PlayerView()
         self.__player_types = {
             0: HumanPlayer,
@@ -30,7 +30,7 @@ class PlayerCtrl:
             self.player_view.menu(text, options)
             # get and parse input
             term = ""
-            choice = self.player_view.get_input().split()
+            choice = self.player_view.input().split()
             if len(choice) == 2:
                 try:
                     term = choice[1]
@@ -56,13 +56,13 @@ class PlayerCtrl:
             elif choice == 2:
                 # add
                 self.player_view.msg("Digite o nome do jogador:")
-                name = self.player_view.get_input()
+                name = self.player_view.input()
                 if name in [p.name for p in self.players]:
                     self.player_view.msg("Jogador com esse nome já existe")
                     continue
                 self.player_view.msg("Tipo de jogador: 0 para humano, 1 para computador")
                 try:
-                    player_type = self.player_view.get_integer(range(len(self.player_types)))
+                    player_type = self.player_view.input_integer(range(len(self.player_types)))
                 except:
                     self.player_view.msg("Opção inválida")
                     continue
@@ -71,9 +71,9 @@ class PlayerCtrl:
             elif choice == 3:
                 # edit
                 self.player_view.msg("Digite o nome atual do jogador:")
-                old_name = self.player_view.get_input()
+                old_name = self.player_view.input()
                 self.player_view.msg("Digite o novo nome do jogador:")
-                new_name = self.player_view.get_input()
+                new_name = self.player_view.input()
                 try:
                     self.modify(old_name, new_name)
                     self.player_view.msg("Nome alterado com sucesso")
@@ -83,7 +83,7 @@ class PlayerCtrl:
             elif choice == 4:
                 # remove
                 self.player_view.msg("Digite o nome de jogador a ser removido")
-                name = self.player_view.get_input()
+                name = self.player_view.input()
                 try:
                     self.remove(name)
                     self.player_view.msg("Jogador excluído com sucesso")

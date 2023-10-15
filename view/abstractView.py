@@ -14,7 +14,7 @@ class AbstractView(ABC):
     def msg(self, text: str):
         print(text)
 
-    def get_integer(self, validator = None):
+    def input_integer(self, validator = None):
         try:
             data = input()
             data = int(data)
@@ -26,5 +26,5 @@ class AbstractView(ABC):
             return None
         raise InvalidInputException()
 
-    def get_input(self):
+    def input(self):
         return input()

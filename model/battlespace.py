@@ -30,13 +30,17 @@ class Battlespace:
 
     def check_hit(self, x: int, y: int):
         """Try to play a move and modify state of game accordingly"""
+        is_hit = False
+        is_sunk = False
         if self.fog_of_war[x][y] is False:
             # the move has already been played
             raise Exception
         self.fog_of_war[x][y] = False
         for ship in self.ships:
             if ship.check_hit(x, y):
+                is_hit = True
                 if ship.sunk:
+                    is_sunk = True
                     for i in range(ship.length()):
                         x, y = ship.position
                         if ship.orientation == 0:
@@ -45,8 +49,8 @@ class Battlespace:
                         elif ship.orientation == 1:
                             x += i
                             self.grid[x][y] = 'x'
-                return True
-        return False
+                break
+        return is_hit, is_sunk
 
     def check_defeat(self):
         """Check if all ships have been sunk"""

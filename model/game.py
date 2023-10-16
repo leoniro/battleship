@@ -1,3 +1,4 @@
+import datetime
 from exception.invalidCoordinateException import InvalidCoordinateException
 from model.battlespace import Battlespace
 from model.abstractPlayer import AbstractPlayer
@@ -21,6 +22,9 @@ class Game:
         self.__height = h
         self.__width = w
         self.__move_list = []
+        self.__scores = [0, 0]
+        self.__start_time = datetime.datetime.now()
+        self.__end_time = None
 
     @property
     def game_ctrl(self):
@@ -52,6 +56,21 @@ class Game:
         """History of all moves played"""
         return self.__move_list
 
+    @property
+    def scores(self):
+        """Scores for this single match"""
+        return self.__scores
+
+    @property
+    def start_time(self):
+        """Time the game started"""
+        return self.__start_time
+
+    @property
+    def end_time(self):
+        """Time the game ended"""
+        return self.__end_time
+
     def turn(self, player_idx):
         """Processes a single turn of gameplay"""
         game_over = False
@@ -68,13 +87,18 @@ class Game:
                 self.game_ctrl.game_view.msg(
                     f'Vez do jogador {self.players[attacker].name}. Faça sua jogada:')
                 x, y = self.players[attacker].play_move(grid, self.game_ctrl)
-                is_hit = self.battlespaces[defender].check_hit(x, y)
+                is_hit, is_sunk = self.battlespaces[defender].check_hit(x, y)
                 break
             except Exception:
                 self.game_ctrl.game_view.msg("Coordenadas inválidas, tente novamente")
                 continue
         self.log_move(attacker, x, y)
         if is_hit:
+            self.players[attacker].add_score(1)
+            self.scores[attacker] += 1
+            if is_sunk:
+                self.players[attacker].add_score(3)
+                self.scores[attacker] += 3
             if self.battlespaces[defender].check_defeat():
                 game_over = True
             return attacker, game_over
@@ -97,5 +121,6 @@ class Game:
         while True:
             next_player_idx, game_over = self.turn(player_idx)
             if game_over:
+                self.__end_time = datetime.datetime.now()
                 return next_player_idx
             player_idx = next_player_idx

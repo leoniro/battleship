@@ -23,8 +23,7 @@ class AbstractPlayer(ABC):
         """Get score"""
         return self.__score
 
-    @score.setter
-    def score(self, score):
+    def add_score(self, score):
         """Add to current score"""
         self.__score += score
 

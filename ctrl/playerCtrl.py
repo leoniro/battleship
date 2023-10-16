@@ -1,3 +1,4 @@
+import datetime
 from view.playerView import PlayerView
 from model.humanPlayer import HumanPlayer
 from model.computerPlayer import ComputerPlayer
@@ -5,7 +6,9 @@ from model.computerPlayer import ComputerPlayer
 class PlayerCtrl:
     """Player controller class"""
     def __init__(self):
-        self.__players = [ComputerPlayer("Computador"), HumanPlayer("Humano")]
+        self.__players = [
+            ComputerPlayer("Computador", datetime.datetime(1970, 1, 1)),
+            HumanPlayer("Humano", datetime.datetime(1970, 1, 2))]
         self.__player_view = PlayerView()
         self.__player_types = {
             0: HumanPlayer,
@@ -67,11 +70,26 @@ class PlayerCtrl:
                     continue
                 self.player_view.msg("Tipo de jogador: 0 para humano, 1 para computador")
                 try:
-                    player_type = self.player_view.input_integer(range(len(self.player_types)))
+                    player_type = self.player_view.input_integer(self.player_types.keys())
                 except Exception:
                     self.player_view.msg("Opção inválida")
                     continue
-                self.add(name, player_type)
+                dob = datetime.datetime(1970, 1, 1)
+                if player_type == 0:
+                    while True:
+                        try:
+                            self.player_view.msg("Ano de nascimento:")
+                            y = self.player_view.input_integer(range(1800, 2024))
+                            self.player_view.msg("Mes de nascimento:")
+                            m = self.player_view.input_integer(range(1, 13))
+                            self.player_view.msg("Dia de nascimento:")
+                            d = self.player_view.input_integer(range(1, 32))
+                            dob = datetime.datetime(y, m, d)
+                            break
+                        except Exception:
+                            self.player_view.msg("Data inválida, tente novamente")
+                            continue
+                self.add(name, player_type, dob)
                 self.player_view.msg("Jogador adicionado com sucesso")
             elif choice == 3:
                 # edit
@@ -96,20 +114,23 @@ class PlayerCtrl:
                     self.player_view.msg("Não foi possível realizar a exclusão")
                     continue
 
-    def add(self, name, player_type):
+    def add(self, name, player_type, dob):
         """Add new player"""
-        self.players.append(self.player_types[player_type](name))
+        self.players.append(self.player_types[player_type](name, dob))
 
     def list(self, term=""):
         """List or search for players"""
-        self.player_view.msg("Tipo  Pts  Nome")
+        self.player_view.msg("Tipo  Pts  Nascimento  Nome")
         for player in [p for p in self.players if term in p.name]:
             if isinstance(player, HumanPlayer):
                 p_type = "Hum"
             else:
                 p_type = "Com"
             self.player_view.msg(
-                f"{p_type:<5}{player.score:4d}  {player.name}")
+                f"{p_type:<5}" + 
+                f"{player.score:4d}  " +
+                f"{player.date_of_birth:%Y-%m-%d}  " +
+                f"{player.name}")
 
     def modify(self, old_name, new_name):
         """Change player name"""

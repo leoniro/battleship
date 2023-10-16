@@ -18,13 +18,13 @@ class AbstractView(ABC):
         """Dictionary with menu options"""
         return self.__options
 
-    def menu(self, text: str, options: dict[int, str]):
+    def menu(self, text, options):
         """Print full menu"""
         print(text)
         for k in options:
             print(f"{k}: {options[k]}")
 
-    def msg(self, text: str):
+    def msg(self, text):
         """Print text"""
         print(text)
 

@@ -12,7 +12,7 @@ class Game:
                  w: int,
                  player1: AbstractPlayer,
                  player2: AbstractPlayer,
-                 ships: list[Ship]):
+                 ships):
 
         self.__game_ctrl = game_ctrl
         self.__players = (player1, player2)

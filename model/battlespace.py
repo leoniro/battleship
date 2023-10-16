@@ -8,7 +8,7 @@ class Battlespace:
     def __init__(self,
                  h: int,
                  w: int,
-                 ships: list[Ship]):
+                 ships):
         self.__ships = copy.deepcopy(ships)
         self.__grid = [[ ' ' for i in range(0, w) ] for j in range(0, h)]
         self.__fog_of_war = [[ True for i in range(0, w) ] for j in range(0, h)]

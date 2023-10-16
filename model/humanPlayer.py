@@ -4,7 +4,7 @@ from exception.invalidCoordinateException import InvalidCoordinateException
 
 class HumanPlayer(AbstractPlayer):
     """Class representing human player"""
-    def play_move(self, grid: list[list[str]], game_ctrl: GameCtrl):
+    def play_move(self, grid, game_ctrl):
         coord = game_ctrl.game_view.input().lower()
         try:
             x, y = self.coord2idx(coord)
@@ -16,7 +16,7 @@ class HumanPlayer(AbstractPlayer):
         except Exception:
             raise InvalidCoordinateException("Coordenadas inválidas")
 
-    def place_ship(self, grid: list[list[str]], game_ctrl: GameCtrl):
+    def place_ship(self, grid, game_ctrl):
         coord = game_ctrl.game_view.input().lower().split()
         try:
             o = int(coord.pop())

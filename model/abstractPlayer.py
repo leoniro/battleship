@@ -35,9 +35,9 @@ class AbstractPlayer(ABC):
         self.__score += score
 
     @abstractmethod
-    def play_move(self, grid: list[list[str]], game_ctrl: GameCtrl):
+    def play_move(self, grid, game_ctrl):
         """Returns coordinates of the move to be played"""
 
     @abstractmethod
-    def place_ship(self, grid: list[list[str]], game_ctrl: GameCtrl):
+    def place_ship(self, grid, game_ctrl):
         """Returns coordinates and orientation of ship to be places"""

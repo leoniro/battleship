@@ -136,7 +136,7 @@ class GameCtrl:
             return
         player = [p for p in self.player_ctrl.players if p.name == name]
         player = player[0]
-        self.game_view.msg("Histório de jogos de {player.name}:")
+        self.game_view.msg(f"Histórico de jogos de {player.name}:")
         for idx, game in enumerate(self.game_history):
             if player not in game.players:
                 continue

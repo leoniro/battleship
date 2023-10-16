@@ -5,109 +5,130 @@ skinparam classAttributeIconSize 0
 hide circle
 
 class Game {
-    - game_ctrl :: GameCtrl
-    - players :: (Player, Player) {field}
-    - battlespaces :: (Battlespace, Battlespace) {field}
-    - height :: int
-    - width :: int
-    - move_list :: (int, str)[] {field}
+    - game_ctrl: GameCtrl
+    - players: tuple[Player, Player]
+    - battlespaces: tuple[Battlespace, Battlespace]
+    - scores: list[int]
+    - height: int
+    - width: int
+    - move_list: list[tuple[int, str]]
+    - start_time: datetime
+    - end_time: datetime
     + __init__(game_ctrl, h, w,
-            player1, player2, ships_copy)
+            player1, player2, ships)
     + game_ctrl()
     + players()
     + battlespaces()
     + height()
     + width()
     + move_list()
+    + scores()
+    + start_time()
+    + end_time()
+    + main_loop(player)
     + turn(player)
-    + log_move(player, coord)
+    + log_move(player, x, y)
+    + idx2coord(x, y)
 }
 
 class GameCtrl {
-    - player_ctrl :: PlayerCtrl
-    - ship_ctrl :: ShipCtrl
-    - game_history :: Game[]
-    - game_view :: GameView
+    - player_ctrl: PlayerCtrl
+    - ship_ctrl: ShipCtrl
+    - game_view: GameView
+    - game_history: list[Game]
     + __init__()
     + player_ctrl()
     + ship_ctrl()
-    + game_history()
     + game_view()
+    + game_history()
+    + start()
     + new_game()
-    + manage_players()
-    + manage_ships()
     + player_ranking()
     + previous_games()
 }
 
 class GameView {
+    - text: str
+    - options: dict[int, str]
     + __init__()
-    + new_game()
-    + render_grid(matrix)
+    + text()
+    + options()
+    + render(grid)
     + menu(text, options)
     + msg(text)
     + get_intput(validator)
 }
 
 class Battlespace {
-    - ships :: Ships[]
-    - grid :: int[][]
-    - fog_of_war :: bool[][]
-    + __init__(h, w, ships_copy)
+    - ships: list[ships]
+    - grid: list[list[str]]
+    - fog_of_war: list[list[bool]]
+    + __init__(h, w, ships)
     + ships()
     + grid()
     + fog_of_war()
-    + check_hit(coord)
+    + check_hit(x, y)
     + check_defeat()
+    + opponent_vision()
+    + place_ship(ship, x, y, orientation)
 }
 
 class Ship {
-    - name :: str
-    - length :: int
-    - orientation :: int
-    - position :: (int, int) {field}
-    - sunk :: bool
-    - hits :: bool[]
-    + __init__()
-    + name()
-    + name(new_name)
+    - type: ShipType
+    - orientation: int
+    - position: tuple[int, int]
+    - sunk: bool
+    - hits: list[bool]
+    + __init__(length)
+    + type()
     + length()
-    + length(new_length)
     + orientation()
-    + orientation(new_orientation)
+    + orientation(orientation)
     + position()
-    + position(new_position)
+    + position(position)
     + sunk()
-    + sunk(is_sunk)
     + hits()
-    + check_hit(coord)
+    + check_hit(x, y)
     + check_sunk()
 }
 
+enum ShipType {
+    BOAT = 1
+    SUBMARINE = 2
+    FRIGATE = 3
+    CARRIER = 4
+}
+
 class ShipCtrl{
-    - ships :: Ship[]
+    - ships: list[Ship]
+    - ship_view: ShipView
     + __init__()
     + ships()
+    + ship_view()
+    + start()
     + add()
     + list()
-    + modify()
     + remove()
 }
 
 class ShipView {
+    - text: str
+    - options: dict[int, str]
     + __init__()
+    + text()
+    + options()
     + menu(text, options)
     + msg(text)
     + get_intput(validator)
-    
 }
 
 class PlayerCtrl {
-    - players :: Player[]
-    - player_view :: PlayerView
+    - players: list[Player]
+    - player_view: PlayerView
     + __init__()
     + players()
     + players_view()
+    + start()
     + add()
     + list()
     + modify()
@@ -115,19 +136,26 @@ class PlayerCtrl {
 }
 
 abstract class Player {
-    - name :: str
-    - score :: int
-    + __init__(name) {abstract}
+    - name: str
+    - score: int
+    - date_of_birth: datetime
+    + __init__(name, dob) {abstract}
     + name()
     + name(str)
     + score()
-    + score(int)
+    + date_of_birth()
+    + add_score(int)
     + play_move(grid, game_ctrl) {abstract}
     + place_ship(game_ctrl) {abstract}
 }
 
 class PlayerView {
+    - text: str
+    - options: dict[int, str]
     + __init__()
+    + text()
+    + options()
+    + input_dob(dob)
     + menu(text, options)
     + msg(text)
     + get_intput(validator)
@@ -137,7 +165,9 @@ class HumanPlayer {
     + __init__(name)
     + play_move(grid, game_ctrl)
     + place_ship(game_ctrl)
+    + coord2idx(coord)
 }
+
 class ComputerPlayer {
     + __init__(name)
     + play_move(grid, game_ctrl)
@@ -155,7 +185,7 @@ GameCtrl "1" --> "1" ShipCtrl : ship_ctrl <
 PlayerCtrl "1" --> "1..*" Player : players <
 PlayerCtrl "1" --> "1" PlayerView : player_view <
 
-Game "1" --> "2" Player : players <
+Game "1" o-- "2" Player : players <
 
 Player <|-- HumanPlayer
 Player <|-- ComputerPlayer
@@ -164,6 +194,7 @@ Game "1" *-- "2" Battlespace : battlespaces <
 
 ShipCtrl "1" --> "1..10" Ship : ships <
 ShipCtrl "1" --> "1" ShipView : ship_view <
-Battlespace "1" --> "1..10" Ship : ships <
+Battlespace "1" o-- "1..10" Ship : ships <
 
+Ship *-r ShipType : type <
 @enduml

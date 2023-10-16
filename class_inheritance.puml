@@ -13,7 +13,7 @@ abstract class View {
 
 class GameView {
     + __init__()
-    + new_game()
+    + render(grid)
 }
 
 class ShipView {
@@ -25,26 +25,30 @@ class PlayerView {
 }
 
 abstract class Player {
-    - name :: str
-    - score :: int
-    + __init__() {abstract}
+    - name: str
+    - score: int
+    - date_of_birth: datetime
+    + __init__(name, dob) {abstract}
     + name()
     + name(str)
     + score()
-    + score(int)
-    + play_move() {abstract}
-    + place_ship() {abstract}
+    + date_of_birth()
+    + add_score(int)
+    + play_move(grid, game_ctrl) {abstract}
+    + place_ship(game_ctrl) {abstract}
 }
 
 class HumanPlayer {
-    + __init__()
-    + play_move()
-    + place_ship()
+    + __init__(name, dob)
+    + play_move(grid, game_ctrl)
+    + place_ship(game_ctrl)
+    + coord2idx(coord)
 }
+
 class ComputerPlayer {
-    + __init__()
-    + play_move()
-    + place_ship()
+    + __init__(name, dob)
+    + play_move(grid, game_ctrl)
+    + place_ship(game_ctrl)
 }
 
 Player <|-- HumanPlayer

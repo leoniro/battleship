@@ -1,5 +1,4 @@
 import datetime
-from exception.invalidCoordinateException import InvalidCoordinateException
 from model.battlespace import Battlespace
 from model.abstractPlayer import AbstractPlayer
 from model.ship import Ship
@@ -14,7 +13,7 @@ class Game:
                  player1: AbstractPlayer,
                  player2: AbstractPlayer,
                  ships: list[Ship]):
-        
+
         self.__game_ctrl = game_ctrl
         self.__players = (player1, player2)
         self.__battlespaces = (Battlespace(h, w, ships),
@@ -73,19 +72,20 @@ class Game:
 
     def turn(self, player_idx):
         """Processes a single turn of gameplay"""
+        from model.humanPlayer import HumanPlayer
+
         game_over = False
         attacker = player_idx
         defender = int(not attacker)
+        grid = self.battlespaces[defender].opponent_vision()
+        self.game_ctrl.game_view.msg('\n')
+        self.game_ctrl.game_view.msg(
+            f'Vez do jogador {self.players[attacker].name}. Faça sua jogada:')
+        # Humans are shown grid before their move
+        if isinstance(self.players[attacker], HumanPlayer):
+            self.game_ctrl.game_view.render(grid)
         while True:
             try:
-                grid = [[
-                    '~' if self.battlespaces[defender].fog_of_war[i][j] is True
-                    else  self.battlespaces[defender].grid[i][j]
-                    for j in range(self.__width)]
-                    for i in range(self.__height)]
-                self.game_ctrl.game_view.render(grid)
-                self.game_ctrl.game_view.msg(
-                    f'Vez do jogador {self.players[attacker].name}. Faça sua jogada:')
                 x, y = self.players[attacker].play_move(grid, self.game_ctrl)
                 is_hit, is_sunk = self.battlespaces[defender].check_hit(x, y)
                 break
@@ -93,10 +93,17 @@ class Game:
                 self.game_ctrl.game_view.msg("Coordenadas inválidas, tente novamente")
                 continue
         self.log_move(attacker, x, y)
+        # When Computer plays, grid is shown after, with move already resolved
+        if not isinstance(self.players[attacker], HumanPlayer):
+            grid = self.battlespaces[defender].opponent_vision()
+            self.game_ctrl.game_view.render(grid)
+        # Report move result and tally scores
         if is_hit:
+            self.game_ctrl.game_view.msg(f"Embarcação atingida em {self.idx2coord(x,y)}")
             self.players[attacker].add_score(1)
             self.scores[attacker] += 1
             if is_sunk:
+                self.game_ctrl.game_view.msg("Embarcação afundada")
                 self.players[attacker].add_score(3)
                 self.scores[attacker] += 3
             if self.battlespaces[defender].check_defeat():

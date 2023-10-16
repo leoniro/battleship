@@ -39,6 +39,7 @@ class Battlespace:
         for ship in self.ships:
             if ship.check_hit(x, y):
                 is_hit = True
+                self.grid[x][y] = 'o'
                 if ship.sunk:
                     is_sunk = True
                     for i in range(ship.length()):
@@ -72,7 +73,7 @@ class Battlespace:
             ship.position = (x, y)
             ship.orientation = 0
             for i in range(ship.length()):
-                grid[x][y + i] = 'o'
+                grid[x][y + i] = '■'
         elif o == 1:
             #vertical
             for i in range(ship.length()):
@@ -83,4 +84,13 @@ class Battlespace:
             ship.position = (x, y)
             ship.orientation = 1
             for i in range(ship.length()):
-                grid[x + i][y] = 'o'
+                grid[x + i][y] = '■'
+
+    def opponent_vision(self):
+        """Returns ship placement grid obstructed by fog of war"""
+        h = len(self.grid)
+        w = len(self.grid[0])
+        grid = [['~' if (self.fog_of_war[i][j] is True) else self.grid[i][j]
+                 for j in range(w)]
+                 for i in range(h)]
+        return grid

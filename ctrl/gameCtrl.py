@@ -59,7 +59,9 @@ class GameCtrl:
     def new_game(self):
         """Set up a new game and start it"""
         from model.game import Game
+        from model.humanPlayer import HumanPlayer
 
+        # create new game
         self.player_ctrl.list()
         self.game_view.msg("Digite o nome do primeiro jogador:")
         p1 = self.game_view.input()
@@ -87,10 +89,10 @@ class GameCtrl:
         except Exception:
             self.game_view.msg("Tamanho inválido")
             return
-
         game = Game(self, h, w, p1, p2, self.ship_ctrl.ships)
         self.game_history.append(game)
 
+        # place ships:
         for player_idx in range(2):
             self.game_view.msg(
                 f"\nJogador {game.players[player_idx].name}: Posicione seus navios")
@@ -98,11 +100,12 @@ class GameCtrl:
                 'Formato: "<linha> <coluna> <orientação>", '
                 'com orientação 0 para horizontal e 1 para vertical')
             for ship in game.battlespaces[player_idx].ships:
+                if isinstance(game.players[player_idx], HumanPlayer):
+                    self.game_view.render(game.battlespaces[player_idx].grid)
+                self.game_view.msg(
+                    f"Posicione um(a) {ship.type}, de comprimento {ship.length()}:")
                 while True:
                     try:
-                        self.game_view.render(game.battlespaces[player_idx].grid)
-                        self.game_view.msg(
-                            f"Posicione um(a) {ship.type}, de comprimento {ship.length()}:")
                         x, y, o = game.players[player_idx].place_ship(
                             game.battlespaces[player_idx].grid, self)
                         game.battlespaces[player_idx].place_ship(ship, x, y, o)

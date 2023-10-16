@@ -36,6 +36,15 @@ class Battlespace:
         self.fog_of_war[x][y] = False
         for ship in self.ships:
             if ship.check_hit(x, y):
+                if ship.sunk:
+                    for i in range(ship.length()):
+                        x, y = ship.position
+                        if ship.orientation == 0:
+                            y += i
+                            self.grid[x][y] = 'x'
+                        elif ship.orientation == 1:
+                            x += i
+                            self.grid[x][y] = 'x'
                 return True
         return False
 

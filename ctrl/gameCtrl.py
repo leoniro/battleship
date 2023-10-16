@@ -120,9 +120,33 @@ class GameCtrl:
 
     def player_ranking(self):
         """List all registered players according to their score"""
-        self.game_view.msg("Digite o nome do jogador de interesse:")
-        name = self.game_view.input()
-        self.player_ctrl.list(name, ranked = True)
+        self.player_ctrl.list("", ranked = True)
 
     def previous_games(self):
         """List previously played games"""
+        from model.game import Game
+
+        self.game_view.msg("Digite o nome do jogador de interesse:")
+        name = self.game_view.input()
+        if name not in [p.name for p in self.player_ctrl.players]:
+            self.game_view.msg("Jogador não encontrado")
+            return
+        player = [p for p in self.player_ctrl.players if p.name == name]
+        player = player[0]
+        self.game_view.msg("Histório de jogos de {player.name}:")
+        for idx, game in enumerate(self.game_history):
+            if player not in game.players:
+                continue
+            self.game_view.msg(f'JOGO {idx+1}:')
+            self.game_view.msg(f'Início: {game.start_time}')
+            self.game_view.msg(f'Fim: {game.end_time}')
+            self.game_view.msg(f'Jogador 1: {game.players[0].name}')
+            self.game_view.msg(f'Jogador 2: {game.players[1].name}')
+            self.game_view.msg(f'Pontuação do jogador 1: {game.scores[0]}')
+            self.game_view.msg(f'Pontuação do jogador 2: {game.scores[1]}')
+            self.game_view.msg('Tabuleiro do Jogador 1:')
+            self.game_view.render(game.battlespaces[0].grid)
+            self.game_view.msg('Tabuleiro do Jogador 2:')
+            self.game_view.render(game.battlespaces[1].grid)
+            self.game_view.msg(f'Movimentos jogados: {game.move_list}')
+            self.game_view.msg('\n')

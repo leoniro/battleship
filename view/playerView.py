@@ -1,3 +1,4 @@
+import datetime
 from view.abstractView import AbstractView
 
 
@@ -19,3 +20,17 @@ class PlayerView(AbstractView):
     @property
     def options(self):
         return self.__options
+
+    def input_dob(self):
+        """get date of birth"""
+        try:
+            self.msg("Ano de nascimento:")
+            y = self.input_integer(range(1800, 2024))
+            self.msg("Mes de nascimento:")
+            m = self.input_integer(range(1, 13))
+            self.msg("Dia de nascimento:")
+            d = self.input_integer(range(1, 32))
+            dob = datetime.datetime(y, m, d)
+        except:
+            raise Exception
+        return dob

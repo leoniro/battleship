@@ -78,13 +78,7 @@ class PlayerCtrl:
                 if player_type == 0:
                     while True:
                         try:
-                            self.player_view.msg("Ano de nascimento:")
-                            y = self.player_view.input_integer(range(1800, 2024))
-                            self.player_view.msg("Mes de nascimento:")
-                            m = self.player_view.input_integer(range(1, 13))
-                            self.player_view.msg("Dia de nascimento:")
-                            d = self.player_view.input_integer(range(1, 32))
-                            dob = datetime.datetime(y, m, d)
+                            dob = self.player_view.input_dob()
                             break
                         except Exception:
                             self.player_view.msg("Data inválida, tente novamente")
@@ -118,15 +112,19 @@ class PlayerCtrl:
         """Add new player"""
         self.players.append(self.player_types[player_type](name, dob))
 
-    def list(self, term=""):
+    def list(self, term = "", ranked = False):
         """List or search for players"""
-        self.player_view.msg("Tipo  Pts  Nascimento  Nome")
-        for player in [p for p in self.players if term in p.name]:
+        self.player_view.msg("   Tipo  Pts  Nascimento  Nome")
+        player_list = [p for p in self.players if term in p.name]
+        if ranked:
+            player_list = sorted(player_list, key = lambda p: -p.score)
+        for idx, player in enumerate(player_list):
             if isinstance(player, HumanPlayer):
                 p_type = "Hum"
             else:
                 p_type = "Com"
             self.player_view.msg(
+                f"{idx+1:2d} " +
                 f"{p_type:<5}" + 
                 f"{player.score:4d}  " +
                 f"{player.date_of_birth:%Y-%m-%d}  " +

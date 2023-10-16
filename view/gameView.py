@@ -7,7 +7,7 @@ class GameView(AbstractView):
         self.__options = {
             1: "Novo jogo",
             2: "Gerenciar Jogadores",
-            3: "Gerencias Embarcações",
+            3: "Gerenciar Embarcações",
             4: "Ranking de Jogadores",
             5: "Histório de Partidas",
             0: "Sair"}

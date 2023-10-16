@@ -120,6 +120,9 @@ class GameCtrl:
 
     def player_ranking(self):
         """List all registered players according to their score"""
+        self.game_view.msg("Digite o nome do jogador de interesse:")
+        name = self.game_view.input()
+        self.player_ctrl.list(name, ranked = True)
 
     def previous_games(self):
         """List previously played games"""

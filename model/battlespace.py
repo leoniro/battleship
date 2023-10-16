@@ -10,8 +10,8 @@ class Battlespace:
                  w: int,
                  ships: list[Ship]):
         self.__ships = copy.deepcopy(ships)
-        self.__grid = [[ 0 for i in range(0, w) ] for j in range(0, h)]
-        self.__fog_of_war = [[ 0 for i in range(0, w) ] for j in range(0, h)]
+        self.__grid = [[ ' ' for i in range(0, w) ] for j in range(0, h)]
+        self.__fog_of_war = [[ True for i in range(0, w) ] for j in range(0, h)]
 
     @property
     def ships(self):
@@ -30,24 +30,44 @@ class Battlespace:
 
     def check_hit(self, x: int, y: int):
         """Try to play a move and modify state of game accordingly"""
-        is_hit = False
-        is_valid = True
-        if self.fog_of_war[x][y] == 1:
+        if self.fog_of_war[x][y] is False:
             # the move has already been played
-            is_valid = False
-            return is_hit, is_valid
+            raise Exception
+        self.fog_of_war[x][y] = False
         for ship in self.ships:
             if ship.check_hit(x, y):
-                is_hit = True
-                return is_hit, is_valid
-        return is_hit, is_valid
+                return True
+        return False
 
     def check_defeat(self):
         """Check if all ships have been sunk"""
         for ship in self.ships:
-            if not ship.is_sunk():
+            if not ship.sunk:
                 return False
         return True
 
-    def place_ship(self, x, y, o):
+    def place_ship(self, ship: Ship, x: int, y: int, o: int):
         """Try to place a ship at coord"""
+        grid = self.grid
+        if o == 0:
+            #horizontal
+            for i in range(ship.length()):
+                if y + i > len(grid[0]):
+                    raise Exception
+                if grid[x][y + i] != ' ':
+                    raise Exception
+            ship.position = (x, y)
+            ship.orientation = 0
+            for i in range(ship.length()):
+                grid[x][y + i] = 'o'
+        elif o == 1:
+            #vertical
+            for i in range(ship.length()):
+                if x + i > len(grid):
+                    raise Exception
+                if grid[x + i][y] != ' ':
+                    raise Exception
+            ship.position = (x, y)
+            ship.orientation = 1
+            for i in range(ship.length()):
+                grid[x + i][y] = 'o'

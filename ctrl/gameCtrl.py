@@ -105,13 +105,13 @@ class GameCtrl:
                             f"Posicione um(a) {ship.type}, de comprimento {ship.length()}:")
                         x, y, o = game.players[player_idx].place_ship(
                             game.battlespaces[player_idx].grid, self)
-                        game.battlespaces[0].place_ship(x, y, o)
+                        game.battlespaces[player_idx].place_ship(ship, x, y, o)
                         break
                     except Exception:
                         self.game_view.msg("Posição inválida, tente novamente")
                         continue
 
-        winner = game.turn(0)
+        winner = game.main_loop(0)
 
         if winner == 0:
             self.game_view.msg(f"{p1.name} venceu")

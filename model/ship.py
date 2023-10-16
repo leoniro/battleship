@@ -20,7 +20,23 @@ class Ship:
     @property
     def hits(self):
         return self.__hits
+
+    @property
+    def position(self):
+        return self.__position
+
+    @position.setter
+    def position(self, pos):
+        self.__position = pos
+
+    @property
+    def orientation(self):
+        return self.__orientation
     
+    @orientation.setter
+    def orientation(self, o):
+        self.__orientation = o
+
     def length(self):
         return self.__type.value
 
@@ -39,13 +55,15 @@ class Ship:
         return False
 
     def check_sunk(self):
+        """check if all squares this ship is on have been hit"""
         for h in self.hits:
-            if h == False:
+            if h is False:
                 return False
         self.__sunk = True
         return True
 
 class ShipType(Enum):
+    """Class representing types of ships"""
     BOAT = 1
     SUBMARINE = 2
     FRIGATE = 3
@@ -60,3 +78,4 @@ class ShipType(Enum):
             return "Fragata"
         if self.value == 4:
             return "Porta-aviões"
+        return "Desconhecido"

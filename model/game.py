@@ -54,23 +54,31 @@ class Game:
 
     def turn(self, player_idx):
         """Processes a single turn of gameplay"""
+        game_over = False
         attacker = player_idx
         defender = int(not attacker)
-        is_valid = False
-        while not is_valid:
+        while True:
             try:
-                x, y = self.players[attacker].play_move()
-                is_hit, is_valid = self.battlespaces[defender].check_hit(x, y)
+                grid = [[
+                    '~' if self.battlespaces[defender].fog_of_war[i][j] is True
+                    else  self.battlespaces[defender].grid[i][j]
+                    for j in range(self.__width)]
+                    for i in range(self.__height)]
+                self.game_ctrl.game_view.render(grid)
+                self.game_ctrl.game_view.msg(
+                    f'Vez do jogador {self.players[attacker].name}. Faça sua jogada:')
+                x, y = self.players[attacker].play_move(grid, self.game_ctrl)
+                is_hit = self.battlespaces[defender].check_hit(x, y)
+                break
             except Exception:
-                pass
-            if not is_valid:
                 self.game_ctrl.game_view.msg("Coordenadas inválidas, tente novamente")
+                continue
         self.log_move(attacker, x, y)
         if is_hit:
             if self.battlespaces[defender].check_defeat():
-                return attacker
-            return self.turn(attacker)
-        return self.turn(defender)
+                game_over = True
+            return attacker, game_over
+        return defender, game_over
 
     def log_move(self, player_idx, x, y):
         """Add valid move do move history"""
@@ -83,3 +91,11 @@ class Game:
         y = chr(y + 97)
         coord = str(x) + ' ' + str(y)
         return coord
+
+    def main_loop(self, player_idx):
+        """turn() wrapper because no tail call optimization :("""
+        while True:
+            next_player_idx, game_over = self.turn(player_idx)
+            if game_over:
+                return next_player_idx
+            player_idx = next_player_idx

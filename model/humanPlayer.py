@@ -15,14 +15,13 @@ class HumanPlayer(AbstractPlayer):
             return x, y
         except Exception:
             raise InvalidCoordinateException("Coordenadas inválidas")
-            
-
-
 
     def place_ship(self, grid: list[list[str]], game_ctrl: GameCtrl):
         coord = game_ctrl.game_view.input().lower().split()
         try:
             o = int(coord.pop())
+            if o != 0 and o != 1:
+                raise InvalidCoordinateException("Coordenadas inválidas")
             coord = ' '.join(coord)
             x, y = self.coord2idx(coord)
             if x < 0 or x >= len(grid):

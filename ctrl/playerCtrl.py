@@ -2,6 +2,7 @@ import datetime
 from view.playerView import PlayerView
 from model.humanPlayer import HumanPlayer
 from model.computerPlayer import ComputerPlayer
+from model.betterComputerPlayer import BetterComputerPlayer
 
 class PlayerCtrl:
     """Player controller class"""
@@ -12,7 +13,8 @@ class PlayerCtrl:
         self.__player_view = PlayerView()
         self.__player_types = {
             0: HumanPlayer,
-            1: ComputerPlayer
+            1: ComputerPlayer,
+            2: BetterComputerPlayer
         }
 
     @property
@@ -68,7 +70,7 @@ class PlayerCtrl:
                 if name in [p.name for p in self.players]:
                     self.player_view.msg("Jogador com esse nome já existe")
                     continue
-                self.player_view.msg("Tipo de jogador: 0 para humano, 1 para computador")
+                self.player_view.msg("Tipo de jogador: 0 para humano, 1 para computador, 2 para computador melhor")
                 try:
                     player_type = self.player_view.input_integer(self.player_types.keys())
                 except Exception:

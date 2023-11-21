@@ -2,6 +2,7 @@ from view.abstractView import AbstractView
 
 
 class ShipView(AbstractView):
+    """View for ship management module"""
     def __init__(self):
         self.__text = "Cadastro de embarcações"
         self.__options = {

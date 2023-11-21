@@ -3,6 +3,7 @@ from view.abstractView import AbstractView
 
 
 class PlayerView(AbstractView):
+    """View for player management module"""
     def __init__(self):
         self.__text = "Cadastro de Jogadores"
         self.__options = {
@@ -23,14 +24,12 @@ class PlayerView(AbstractView):
 
     def input_dob(self):
         """get date of birth"""
-        try:
-            self.msg("Ano de nascimento:")
-            y = self.input_integer(range(1800, 2024))
-            self.msg("Mes de nascimento:")
-            m = self.input_integer(range(1, 13))
-            self.msg("Dia de nascimento:")
-            d = self.input_integer(range(1, 32))
-            dob = datetime.datetime(y, m, d)
-        except:
-            raise Exception
-        return dob
+        while True:
+            try:
+                y = self.input_integer(None, "Ano de nascimento:")
+                m = self.input_integer(None, "Mes de nascimento:")
+                d = self.input_integer(None, "Dia de nascimento:")
+                dob = datetime.datetime(y, m, d)
+                return dob
+            except ValueError:
+                continue

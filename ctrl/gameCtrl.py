@@ -1,5 +1,6 @@
 from ctrl.shipCtrl import ShipCtrl
 from view.gameView import GameView
+from exception.invalidCoordinateException import InvalidCoordinateException
 
 
 class GameCtrl:
@@ -34,18 +35,11 @@ class GameCtrl:
 
     def start(self):
         """Prints main menu and dispatches accordingly"""
-        text = self.game_view.text
-        options = self.game_view.options
         while True:
-            self.game_view.menu(text, options)
-            try:
-                choice = self.game_view.input_integer(options.keys())
-            except Exception:
-                self.game_view.msg("Opção inválida. Tente novamente\n")
-                continue
+            choice, _ = self.game_view.menu()
             if choice == 0:
                 return
-            elif choice == 1:
+            if choice == 1:
                 self.new_game()
             elif choice == 2:
                 self.player_ctrl.start()
@@ -63,32 +57,24 @@ class GameCtrl:
 
         # create new game
         self.player_ctrl.list()
-        self.game_view.msg("Digite o nome do primeiro jogador:")
-        p1 = self.game_view.input()
-        self.game_view.msg("Digite o nome do segundo jogador:")
-        p2 = self.game_view.input()
+        p1 = self.game_view.input("Digite o nome do primeiro jogador:")
+        p2 = self.game_view.input("Digite o nome do segundo jogador:")
         if p1 not in [p.name for p in self.player_ctrl.players]:
-            self.game_view.msg("Jogador 1 não existe")
+            self.game_view.error("Jogador 1 não existe")
             return
         if p2 not in [p.name for p in self.player_ctrl.players]:
-            self.game_view.msg("Jogador 2 não existe")
+            self.game_view.error("Jogador 2 não existe")
             return
         p1 = [p for p in self.player_ctrl.players if p.name == p1]
         p2 = [p for p in self.player_ctrl.players if p.name == p2]
         p1 = p1[0]
         p2 = p2[0]
-        self.game_view.msg("Digite a altura do tabuleiro (10 a 20)")
-        try:
-            h = self.game_view.input_integer(range(10,21))
-        except Exception:
-            self.game_view.msg("Tamanho inválido")
-            return
-        self.game_view.msg("Digite a largura do tabuleiro (10 a 20)")
-        try:
-            w = self.game_view.input_integer(range(10,21))
-        except Exception:
-            self.game_view.msg("Tamanho inválido")
-            return
+        h = self.game_view.input_integer(
+            range(10,21),
+            "Digite a altura do tabuleiro (10 a 20)")
+        w = self.game_view.input_integer(
+            range(10,21),
+            "Digite a largura do tabuleiro (10 a 20)")
         game = Game(self, h, w, p1, p2, self.ship_ctrl.ships)
         self.game_history.append(game)
 
@@ -110,8 +96,8 @@ class GameCtrl:
                             game.battlespaces[player_idx].grid, self)
                         game.battlespaces[player_idx].place_ship(ship, x, y, o)
                         break
-                    except Exception:
-                        self.game_view.msg("Posição inválida, tente novamente")
+                    except InvalidCoordinateException:
+                        self.game_view.error("Posição inválida, tente novamente")
                         continue
 
         winner = game.main_loop(0)
@@ -129,8 +115,7 @@ class GameCtrl:
         """List previously played games"""
         from model.game import Game
 
-        self.game_view.msg("Digite o nome do jogador de interesse:")
-        name = self.game_view.input()
+        name = self.game_view.input("Digite o nome do jogador de interesse:")
         if name not in [p.name for p in self.player_ctrl.players]:
             self.game_view.msg("Jogador não encontrado")
             return

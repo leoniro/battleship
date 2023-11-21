@@ -1,6 +1,6 @@
 import copy
 from model.ship import Ship
-#from exception.invalidCoordinateException import InvalidCoordinateException
+from exception.invalidCoordinateException import InvalidCoordinateException
 
 
 class Battlespace:
@@ -34,7 +34,7 @@ class Battlespace:
         is_sunk = False
         if self.fog_of_war[x][y] is False:
             # the move has already been played
-            raise Exception
+            raise InvalidCoordinateException
         self.fog_of_war[x][y] = False
         for ship in self.ships:
             if ship.check_hit(x, y):
@@ -66,10 +66,10 @@ class Battlespace:
         if o == 0:
             #horizontal
             for i in range(ship.length()):
-                if y + i > len(grid[0]):
-                    raise Exception
+                if y + i >= len(grid[0]):
+                    raise InvalidCoordinateException
                 if grid[x][y + i] != ' ':
-                    raise Exception
+                    raise InvalidCoordinateException
             ship.position = (x, y)
             ship.orientation = 0
             for i in range(ship.length()):
@@ -77,10 +77,10 @@ class Battlespace:
         elif o == 1:
             #vertical
             for i in range(ship.length()):
-                if x + i > len(grid):
-                    raise Exception
+                if x + i >= len(grid):
+                    raise InvalidCoordinateException
                 if grid[x + i][y] != ' ':
-                    raise Exception
+                    raise InvalidCoordinateException
             ship.position = (x, y)
             ship.orientation = 1
             for i in range(ship.length()):

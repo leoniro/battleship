@@ -24,35 +24,32 @@ class ShipCtrl():
     def start(self):
         """Main menu for ship CRUD"""
         while True:
-            text = self.ship_view.text
-            options = self.ship_view.options
-            self.ship_view.menu(text, options)
-            try:
-                choice = self.ship_view.input_integer(options.keys())
-            except Exception:
-                self.ship_view.msg("Opção inválida. Tente novamente\n")
-                continue
+            choice, _ = self.ship_view.menu()
             if choice == 0:
                 return
-            elif choice == 1:
+            if choice == 1:
                 self.list()
             elif choice == 2:
                 self.ship_view.msg("Escolha o comprimento da embarcação (1 a 4):")
                 try:
-                    length = self.ship_view.input_integer(range(1,5))
+                    length = self.ship_view.input_integer()
                     self.add(length)
-                except Exception:
-                    self.ship_view.msg("Não foi possível adicionar")
+                except MaximumShipsReachedException:
+                    self.ship_view.error("Quantidade máxima de embarcações atingida")
+                except ValueError:
+                    self.ship_view.error("Tamanho inválido de embarcação")
             elif choice == 3:
                 # remove
                 self.list()
                 self.ship_view.msg("Digite o Id da embarcação a ser removida")
                 try:
-                    idx = self.ship_view.input_integer(range(len(self.ships)))
+                    idx = self.ship_view.input_integer()
                     self.remove(idx)
                     self.ship_view.msg("Removido com sucesso")
-                except Exception:
-                    self.ship_view.msg("Não foi possível remover")
+                except MinimumShipsReachedException:
+                    self.ship_view.error("Mínimo de embarcações atingido")
+                except IndexError:
+                    self.ship_view.error("Id inválido")
 
     def add(self, length):
         """Add new ship"""

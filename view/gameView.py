@@ -2,6 +2,7 @@ from view.abstractView import AbstractView
 
 
 class GameView(AbstractView):
+    """View for main game logic"""
     def __init__(self):
         self.__text = "BATALHA NAVAL. Escolha uma opção:"
         self.__options = {

@@ -9,35 +9,35 @@ class HumanPlayer(AbstractPlayer):
         try:
             x, y = self.coord2idx(coord)
             if x < 0 or x >= len(grid):
-                raise InvalidCoordinateException("Coordenadas inválidas")
+                raise InvalidCoordinateException
             if y < 0 or y >= len(grid[0]):
-                raise InvalidCoordinateException("Coordenadas inválidas")
+                raise InvalidCoordinateException
             return x, y
-        except Exception:
-            raise InvalidCoordinateException("Coordenadas inválidas")
+        except Exception as exc:
+            raise InvalidCoordinateException from exc
 
     def place_ship(self, grid, game_ctrl):
         coord = game_ctrl.game_view.input().lower().split()
         try:
             o = int(coord.pop())
             if o != 0 and o != 1:
-                raise InvalidCoordinateException("Coordenadas inválidas")
+                raise InvalidCoordinateException
             coord = ' '.join(coord)
             x, y = self.coord2idx(coord)
             if x < 0 or x >= len(grid):
-                raise InvalidCoordinateException("Coordenadas inválidas")
+                raise InvalidCoordinateException
             if y < 0 or y >= len(grid[0]):
-                raise InvalidCoordinateException("Coordenadas inválidas")
+                raise InvalidCoordinateException
             return x, y, o
-        except Exception:
-            raise InvalidCoordinateException("Coordenadas inválidas")
+        except Exception as exc:
+            raise InvalidCoordinateException from exc
 
     def coord2idx(self, coord):
-        """Convert string coordinate to integer pair"""
+        """Convert string coordinate to integer pair. No inbounds check"""
         try:
             x, y = coord.lower().split()
             x = int(x) - 1
             y = ord(y) - 97
             return x, y
-        except Exception:
-            raise InvalidCoordinateException("Coordenadas inválidas")
+        except (TypeError, ValueError) as exc:
+            raise InvalidCoordinateException from exc

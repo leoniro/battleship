@@ -1,8 +1,10 @@
 import datetime
 from model.battlespace import Battlespace
 from model.abstractPlayer import AbstractPlayer
+from model.humanPlayer import HumanPlayer
 from model.ship import Ship
 from ctrl.gameCtrl import GameCtrl
+from exception.invalidCoordinateException import InvalidCoordinateException
 
 class Game:
     """class representing a single game match"""
@@ -72,15 +74,12 @@ class Game:
 
     def turn(self, player_idx):
         """Processes a single turn of gameplay"""
-        from model.humanPlayer import HumanPlayer
-
         game_over = False
         attacker = player_idx
         defender = int(not attacker)
         grid = self.battlespaces[defender].opponent_vision()
-        self.game_ctrl.game_view.msg('\n')
         self.game_ctrl.game_view.msg(
-            f'Vez do jogador {self.players[attacker].name}. Faça sua jogada:')
+            f'\n\nVez do jogador {self.players[attacker].name}. Faça sua jogada:')
         # Humans are shown grid before their move
         if isinstance(self.players[attacker], HumanPlayer):
             self.game_ctrl.game_view.render(grid)
@@ -89,8 +88,8 @@ class Game:
                 x, y = self.players[attacker].play_move(grid, self.game_ctrl)
                 is_hit, is_sunk = self.battlespaces[defender].check_hit(x, y)
                 break
-            except Exception:
-                self.game_ctrl.game_view.msg("Coordenadas inválidas, tente novamente")
+            except InvalidCoordinateException:
+                self.game_ctrl.game_view.error("Coordenadas inválidas, tente novamente")
                 continue
         self.log_move(attacker, x, y)
         # When Computer plays, grid is shown after, with move already resolved

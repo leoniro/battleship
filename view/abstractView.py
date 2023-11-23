@@ -1,4 +1,7 @@
 from abc import ABC, abstractmethod
+from exception.invalidInputException import InvalidInputException
+from exception.uiCancelException import UICancelException
+import PySimpleGUI as sg
 
 
 class AbstractView(ABC):
@@ -18,15 +21,19 @@ class AbstractView(ABC):
         """Dictionary with menu options"""
         return self.__options
 
-    def menu(self):
+    def menu(self, text = None, options = None):
         """Print full menu, return chosen option"""
-        text = self.text
-        options = self.options
-        print(text)
+        if text is None:
+            text = self.text
+        if options is None:
+            options = self.options
+        layout = [[ sg.Text(text) ]]
         for k, v in options.items():
-            print(f"{k}: {v}")
-        choice, args = self.input_integer_with_args(options.keys())
-        return choice, args
+            layout.append([sg.Button( button_text = v, key = k)])
+        main_menu = sg.Window('Batalha Naval').Layout(layout)
+        choice, _ = main_menu.Read()
+        main_menu.close()
+        return choice
 
     def msg(self, text):
         """Print text"""
@@ -38,15 +45,22 @@ class AbstractView(ABC):
 
     def input_integer(self, validator = None, prompt = ''):
         """Get input and tries to cast it to integer in validator"""
-        print(prompt)
-        while True:
-            try:
-                data = int(input())
-                if (not validator) or (data in validator):
-                    return data
-                raise ValueError
-            except ValueError:
-                continue
+        layout = [[sg.Text(prompt)], [sg.Input(key = 'input')], [sg.Submit(), sg.Cancel()]]
+        input_window = sg.Window(prompt).Layout(layout)
+        button, data = input_window.Read()
+        print(button, input)
+        input_window.close()
+        if button == 'Cancel' or button is None:
+            raise UICancelException
+        if button == 'Submit':
+            data = data['input']
+        try:
+            data = int(input())
+            if (not validator) or (data in validator):
+                return data
+            raise InvalidInputException
+        except ValueError as exc:
+            raise InvalidInputException from exc
 
     def input_integer_with_args(self, validator = None, prompt = ''):
         """Get input, split, cast first element to integer"""
@@ -67,3 +81,4 @@ class AbstractView(ABC):
         """Get arbitrary input"""
         print(prompt)
         return input()
+[]

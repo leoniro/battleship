@@ -36,7 +36,7 @@ class GameCtrl:
     def start(self):
         """Prints main menu and dispatches accordingly"""
         while True:
-            choice, _ = self.game_view.menu()
+            choice = self.game_view.menu()
             if choice == 0:
                 return
             if choice == 1:

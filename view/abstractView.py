@@ -34,6 +34,35 @@ class AbstractView(ABC):
         choice, _ = main_menu.Read()
         main_menu.close()
         return choice
+    
+    def multiple_choices(self, text, options):
+        """One-time window with multiple options"""
+        layout = [[sg.Text(text)],
+                  [sg.Listbox(values = options, key = 'choice', size = (30,3))],
+                  [sg.Submit(), sg.Cancel()]]
+        listbox_window = sg.Window(text).Layout(layout)
+        button, data = listbox_window.Read()
+        listbox_window.close()
+        if button == 'Cancel' or button is None:
+            raise UICancelException
+        if button == 'Submit':
+            data = data['choice']
+            return data[0]
+
+    def spinbox(self, text, options):
+        layout = [
+            [sg.Text(text)],
+            [sg.Spin(values = list(options), initial_value = options[0], key = 'spin')],
+            [sg.Submit(), sg.Cancel()]]
+        spin_window = sg.Window(text).Layout(layout)
+        button, data = spin_window.Read()
+        spin_window.close()
+        if button == 'Cancel' or button is None:
+            raise UICancelException
+        if button == 'Submit':
+            data = data['spin']
+        return data
+
 
     def msg(self, text):
         """Print text"""
@@ -81,4 +110,3 @@ class AbstractView(ABC):
         """Get arbitrary input"""
         print(prompt)
         return input()
-[]

@@ -1,6 +1,7 @@
 from ctrl.shipCtrl import ShipCtrl
 from view.gameView import GameView
 from exception.invalidCoordinateException import InvalidCoordinateException
+from exception.uiCancelException import UICancelException
 
 
 class GameCtrl:
@@ -56,25 +57,17 @@ class GameCtrl:
         from model.humanPlayer import HumanPlayer
 
         # create new game
-        self.player_ctrl.list()
-        p1 = self.game_view.input("Digite o nome do primeiro jogador:")
-        p2 = self.game_view.input("Digite o nome do segundo jogador:")
-        if p1 not in [p.name for p in self.player_ctrl.players]:
-            self.game_view.error("Jogador 1 não existe")
+        player_list = [ p.name for p in self.player_ctrl.players ]
+        try:
+            p1 = self.game_view.multiple_choices("Escolha o primeiro jogador:", player_list)
+            player_list.remove(p1)
+            p2 = self.game_view.multiple_choices("Escolha o segundo jogador:", player_list)
+            p1 = [p for p in self.player_ctrl.players if p.name == p1][0]
+            p2 = [p for p in self.player_ctrl.players if p.name == p2][0]
+            h = self.game_view.spinbox("Altura do tabuleiro:", range(10,21))
+            w = self.game_view.spinbox("Largura do tabuleiro:", range(10,21))
+        except UICancelException:
             return
-        if p2 not in [p.name for p in self.player_ctrl.players]:
-            self.game_view.error("Jogador 2 não existe")
-            return
-        p1 = [p for p in self.player_ctrl.players if p.name == p1]
-        p2 = [p for p in self.player_ctrl.players if p.name == p2]
-        p1 = p1[0]
-        p2 = p2[0]
-        h = self.game_view.input_integer(
-            range(10,21),
-            "Digite a altura do tabuleiro (10 a 20)")
-        w = self.game_view.input_integer(
-            range(10,21),
-            "Digite a largura do tabuleiro (10 a 20)")
         game = Game(self, h, w, p1, p2, self.ship_ctrl.ships)
         self.game_history.append(game)
 

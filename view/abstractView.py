@@ -65,12 +65,18 @@ class AbstractView(ABC):
 
 
     def msg(self, text):
-        """Print text"""
-        print(text)
+        """Info Box"""
+        layout = [[sg.Text(text)], [sg.Submit()]]
+        window = sg.Window("Info").Layout(layout)
+        window.Read()
+        window.close()
 
     def error(self, text):
-        """Print text"""
-        print(text)
+        """Error box"""
+        layout = [[sg.Text(text)], [sg.Submit()]]
+        window = sg.Window("Erro").Layout(layout)
+        window.Read()
+        window.close()
 
     def input_integer(self, validator = None, prompt = ''):
         """Get input and tries to cast it to integer in validator"""
@@ -91,22 +97,15 @@ class AbstractView(ABC):
         except ValueError as exc:
             raise InvalidInputException from exc
 
-    def input_integer_with_args(self, validator = None, prompt = ''):
-        """Get input, split, cast first element to integer"""
-        print(prompt)
-        while True:
-            data = input().split()
-            args = []
-            try:
-                choice = int(data[0])
-                if len(data) > 1:
-                    args = data[1:]
-                if (not validator) or (choice in validator):
-                    return choice, args
-            except ValueError:
-                continue
-
     def input(self, prompt = ''):
         """Get arbitrary input"""
-        print(prompt)
-        return input()
+        layout = [[sg.Text(prompt)], [sg.Input(key = 'input')], [sg.Submit(), sg.Cancel()]]
+        input_window = sg.Window(prompt).Layout(layout)
+        button, data = input_window.Read()
+        print(button, input)
+        input_window.close()
+        if button == 'Cancel' or button is None:
+            raise UICancelException
+        if button == 'Submit':
+            data = data['input']
+            return data

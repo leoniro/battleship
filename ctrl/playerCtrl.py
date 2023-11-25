@@ -5,6 +5,8 @@ from model.computerPlayer import ComputerPlayer
 from model.betterComputerPlayer import BetterComputerPlayer
 from exception.playerAlreadyExistsException import PlayerAlreadyExistsException
 from exception.playerNotFoundException import PlayerNotFoundException
+
+
 class PlayerCtrl:
     """Player controller class"""
     def __init__(self):
@@ -36,15 +38,14 @@ class PlayerCtrl:
     def start(self):
         """Main menu of Player Control"""
         while True:
-            choice, args = self.player_view.menu()
+            choice = self.player_view.menu()
             # get and parse input
-            query = ' '.join(args)
             # case switching
             if choice == 0:
                 return
             elif choice == 1:
                 # list
-                self.list(query)
+                self.list()
             elif choice == 2:
                 # add
                 name = self.player_view.input("Digite o nome do jogador:")

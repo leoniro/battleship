@@ -1,4 +1,5 @@
 from view.abstractView import AbstractView
+import PySimpleGUI as sg
 
 
 class GameView(AbstractView):
@@ -34,3 +35,30 @@ class GameView(AbstractView):
                 print(f'{c:>2}', end = '')
             print('')
             
+    def place_ship_menu(self, player_name, grid, ship_length):
+        layout = [
+            [sg.Text(f"Jogador {player_name}: Posicione um navio de comprimento {ship_length}")],
+            [sg.Radio(text = "Horizontal", group_id=0, key = 'hor', default = True),
+             sg.Radio(text = "Vertical", group_id=0, key = 'ver')]]
+        h = len(grid)
+        w = len(grid[0])
+        for i in range(h):
+            line = []
+            for j in range(w):
+                if grid[i][j] == ' ':
+                    line.append(sg.Button(key = (i,j), button_color='blue'))
+                else:
+                    line.append(sg.Button(key = (i,j), button_color='black'))
+            layout.append(line)
+        placement_menu = sg.Window('Posicionar embarcação').Layout(layout)
+        button, data = placement_menu.Read()
+        placement_menu.close()
+        try:
+            x, y = button
+            if data['hor']:
+                o = 0
+            elif data['ver']:
+                o = 1
+            return x, y, o
+        except:
+            pass

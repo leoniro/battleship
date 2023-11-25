@@ -73,25 +73,21 @@ class GameCtrl:
 
         # place ships:
         for player_idx in range(2):
-            self.game_view.msg(
-                f"\nJogador {game.players[player_idx].name}: Posicione seus navios")
-            self.game_view.msg(
-                'Formato: "<linha> <coluna> <orientação>", '
-                'com orientação 0 para horizontal e 1 para vertical')
+            player_name = game.players[player_idx].name
             for ship in game.battlespaces[player_idx].ships:
+                grid = game.battlespaces[player_idx].grid
                 if isinstance(game.players[player_idx], HumanPlayer):
-                    self.game_view.render(game.battlespaces[player_idx].grid)
-                self.game_view.msg(
-                    f"Posicione um(a) {ship.type}, de comprimento {ship.length()}:")
-                while True:
-                    try:
-                        x, y, o = game.players[player_idx].place_ship(
-                            game.battlespaces[player_idx].grid, self)
-                        game.battlespaces[player_idx].place_ship(ship, x, y, o)
-                        break
-                    except InvalidCoordinateException:
-                        self.game_view.error("Posição inválida, tente novamente")
-                        continue
+                    x, y, o = self.game_view.place_ship_menu(
+                        player_name, grid, ship.length())
+                    game.battlespaces[player_idx].place_ship(ship, x, y, o)
+                else:
+                    while True:
+                        try:
+                            x, y, o = game.players[player_idx].place_ship(grid, self)
+                            game.battlespaces[player_idx].place_ship(ship, x, y, o)
+                            break
+                        except InvalidCoordinateException:
+                            continue
 
         winner = game.main_loop(0)
 

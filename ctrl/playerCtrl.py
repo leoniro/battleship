@@ -5,6 +5,7 @@ from model.computerPlayer import ComputerPlayer
 from model.betterComputerPlayer import BetterComputerPlayer
 from exception.playerAlreadyExistsException import PlayerAlreadyExistsException
 from exception.playerNotFoundException import PlayerNotFoundException
+from exception.uiCancelException import UICancelException
 
 
 class PlayerCtrl:
@@ -39,8 +40,6 @@ class PlayerCtrl:
         """Main menu of Player Control"""
         while True:
             choice = self.player_view.menu()
-            # get and parse input
-            # case switching
             if choice == 0:
                 return
             elif choice == 1:
@@ -48,23 +47,30 @@ class PlayerCtrl:
                 self.list()
             elif choice == 2:
                 # add
-                name = self.player_view.input("Digite o nome do jogador:")
-                if name in [p.name for p in self.players]:
-                    self.player_view.msg("Jogador com esse nome já existe")
+                try:
+                    name = self.player_view.input("Digite o nome do jogador:")
+                    player_type = self.player_view.menu(
+                        "Escolha o tipo de jogador:", self.player_types)
+                    dob = datetime.datetime(1970, 1, 1)
+                    if player_type == 0:
+                        dob = self.player_view.input_dob()
+                    self.add(name, player_type, dob)
+                    self.player_view.msg("Jogador adicionado com sucesso")
+                except PlayerAlreadyExistsException:
+                    self.player_view.error("Jogador com esse nome já existe")
                     continue
-                player_type = self.player_view.input_integer(
-                    self.player_types.keys(),
-                    "Tipo de jogador: 0 para humano, 1 para computador, 2 para computador melhor")
-                dob = datetime.datetime(1970, 1, 1)
-                if player_type == 0:
-                    dob = self.player_view.input_dob()
-                self.add(name, player_type, dob)
-                self.player_view.msg("Jogador adicionado com sucesso")
+                except ValueError:
+                    self.player_view.error("Data inválida")
+                    continue
+                except UICancelException:
+                    continue
             elif choice == 3:
                 # edit
-                old_name = self.player_view.input("Digite o nome atual do jogador:")
-                new_name = self.player_view.input("Digite o novo nome do jogador:")
                 try:
+                    old_name = self.player_view.multiple_choices(
+                        "Escolha o jogador a ser modificado:",
+                        [p.name for p in self.players])
+                    new_name = self.player_view.input("Digite o novo nome do jogador:")
                     self.modify(old_name, new_name)
                     self.player_view.msg("Nome alterado com sucesso")
                 except PlayerNotFoundException:
@@ -73,37 +79,44 @@ class PlayerCtrl:
                 except PlayerAlreadyExistsException:
                     self.player_view.error("Já existe jogador com esse nome")
                     continue
+                except UICancelException:
+                    continue
             elif choice == 4:
                 # remove
-                name = self.player_view.input("Digite o nome de jogador a ser removido")
                 try:
+                    name = self.player_view.multiple_choices(
+                        "Escolha o jogador a ser removido:",
+                        [ p.name for p in self.players])
                     self.remove(name)
                     self.player_view.msg("Jogador excluído com sucesso")
                 except PlayerNotFoundException:
                     self.player_view.error("Jogador não existe")
                     continue
+                except UICancelException:
+                    continue
 
     def add(self, name, player_type, dob):
         """Add new player"""
+        if name in [p.name for p in self.players]:
+            raise PlayerAlreadyExistsException
         self.players.append(self.player_types[player_type](name, dob))
 
     def list(self, query = "", ranked = False):
         """List or search for players"""
-        self.player_view.msg("   Tipo  Pts  Nascimento  Nome")
+        col_names = ['Nome', 'Tipo', 'Pontuação', 'Data de nascimento']
         player_list = [p for p in self.players if query in p.name]
         if ranked:
             player_list = sorted(player_list, key = lambda p: -p.score)
-        for idx, player in enumerate(player_list):
-            if isinstance(player, HumanPlayer):
-                p_type = "Hum"
-            else:
-                p_type = "Com"
-            self.player_view.msg(
-                f"{idx+1:2d} " +
-                f"{p_type:<5}" + 
-                f"{player.score:4d}  " +
-                f"{player.date_of_birth:%Y-%m-%d}  " +
-                f"{player.name}")
+        data = []
+        for player in player_list:
+            data.append([
+                player.name,
+                "Humano" if isinstance(player, HumanPlayer) else "Computador",
+                str(player.score),
+                player.date_of_birth.strftime('%d-%m-%Y') if isinstance(player, HumanPlayer) else 'N/A'
+            ])
+        self.player_view.info_menu(col_names, data)
+        
 
     def modify(self, old_name, new_name):
         """Change player name"""

@@ -7,7 +7,7 @@ class PlayerView(AbstractView):
     def __init__(self):
         self.__text = "Cadastro de Jogadores"
         self.__options = {
-            1: 'Listar jogadores ( "1 <termo>" para buscar)',
+            1: 'Listar jogadores',
             2: "Adicionar novo jogador",
             3: "Editar nome de um jogador",
             4: "Excluir jogador",

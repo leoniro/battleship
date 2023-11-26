@@ -85,14 +85,13 @@ class AbstractView(ABC):
         layout = [[sg.Text(prompt)], [sg.Input(key = 'input')], [sg.Submit(), sg.Cancel()]]
         input_window = sg.Window(prompt).Layout(layout)
         button, data = input_window.Read()
-        print(button, input)
         input_window.close()
         if button == 'Cancel' or button is None:
             raise UICancelException
         if button == 'Submit':
             data = data['input']
         try:
-            data = int(input())
+            data = int(data)
             if (not validator) or (data in validator):
                 return data
             raise InvalidInputException
@@ -104,10 +103,18 @@ class AbstractView(ABC):
         layout = [[sg.Text(prompt)], [sg.Input(key = 'input')], [sg.Submit(), sg.Cancel()]]
         input_window = sg.Window(prompt).Layout(layout)
         button, data = input_window.Read()
-        print(button, input)
         input_window.close()
         if button == 'Cancel' or button is None:
             raise UICancelException
         if button == 'Submit':
             data = data['input']
             return data
+        
+    def info_menu(self, column_names, data):
+        layout = [[ sg.T(e, size = (15,1)) for e in column_names]]
+        for row in data:
+            layout.append([ sg.T(e, size = (15,1)) for e in row])
+        layout.append([sg.OK()])
+        info_window = sg.Window('Batalha Naval').Layout(layout)
+        info_window.Read()
+        info_window.close()

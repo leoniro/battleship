@@ -33,6 +33,8 @@ class AbstractView(ABC):
         main_menu = sg.Window('Batalha Naval').Layout(layout)
         choice, _ = main_menu.Read()
         main_menu.close()
+        if choice is None:
+            raise UICancelException
         return choice
     
     def multiple_choices(self, text, options):

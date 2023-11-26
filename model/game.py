@@ -5,6 +5,7 @@ from model.humanPlayer import HumanPlayer
 from model.ship import Ship
 from ctrl.gameCtrl import GameCtrl
 from exception.invalidCoordinateException import InvalidCoordinateException
+from exception.uiCancelException import UICancelException
 
 class Game:
     """class representing a single game match"""
@@ -77,32 +78,26 @@ class Game:
         game_over = False
         attacker = player_idx
         defender = int(not attacker)
+        attacker_name = self.players[attacker].name
         grid = self.battlespaces[defender].opponent_vision()
-        self.game_ctrl.game_view.msg(
-            f'\n\nVez do jogador {self.players[attacker].name}. Faça sua jogada:')
-        # Humans are shown grid before their move
         if isinstance(self.players[attacker], HumanPlayer):
-            self.game_ctrl.game_view.render(grid)
-        while True:
             try:
-                x, y = self.players[attacker].play_move(grid, self.game_ctrl)
+                x, y = self.game_ctrl.game_view.turn_menu(attacker_name, grid)
                 is_hit, is_sunk = self.battlespaces[defender].check_hit(x, y)
-                break
-            except InvalidCoordinateException:
-                self.game_ctrl.game_view.error("Coordenadas inválidas, tente novamente")
-                continue
-        self.log_move(attacker, x, y)
-        # When Computer plays, grid is shown after, with move already resolved
-        if not isinstance(self.players[attacker], HumanPlayer):
+            except UICancelException as exc:
+                raise UICancelException from exc
+        else:
+            x, y = self.players[attacker].play_move(grid, self.game_ctrl)
+            is_hit, is_sunk = self.battlespaces[defender].check_hit(x, y)
             grid = self.battlespaces[defender].opponent_vision()
-            self.game_ctrl.game_view.render(grid)
+            self.game_ctrl.game_view.turn_feedback_menu(attacker_name, grid)
+        self.log_move(attacker, x, y)
+
         # Report move result and tally scores
         if is_hit:
-            self.game_ctrl.game_view.msg(f"Embarcação atingida em {self.idx2coord(x,y)}")
             self.players[attacker].add_score(1)
             self.scores[attacker] += 1
             if is_sunk:
-                self.game_ctrl.game_view.msg("Embarcação afundada")
                 self.players[attacker].add_score(3)
                 self.scores[attacker] += 3
             if self.battlespaces[defender].check_defeat():
@@ -125,7 +120,10 @@ class Game:
     def main_loop(self, player_idx):
         """turn() wrapper because no tail call optimization :("""
         while True:
-            next_player_idx, game_over = self.turn(player_idx)
+            try:
+                next_player_idx, game_over = self.turn(player_idx)
+            except UICancelException as exc:
+                raise UICancelException from exc
             if game_over:
                 self.__end_time = datetime.datetime.now()
                 return next_player_idx

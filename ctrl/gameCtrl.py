@@ -37,7 +37,10 @@ class GameCtrl:
     def start(self):
         """Prints main menu and dispatches accordingly"""
         while True:
-            choice = self.game_view.menu()
+            try:
+                choice = self.game_view.menu()
+            except UICancelException:
+                return
             if choice == 0:
                 return
             if choice == 1:
@@ -77,9 +80,17 @@ class GameCtrl:
             for ship in game.battlespaces[player_idx].ships:
                 grid = game.battlespaces[player_idx].grid
                 if isinstance(game.players[player_idx], HumanPlayer):
-                    x, y, o = self.game_view.place_ship_menu(
-                        player_name, grid, ship.length())
-                    game.battlespaces[player_idx].place_ship(ship, x, y, o)
+                    while True:
+                        try:
+                            x, y, o = self.game_view.place_ship_menu(
+                                player_name, grid, ship.length())
+                            game.battlespaces[player_idx].place_ship(ship, x, y, o)
+                            break
+                        except InvalidCoordinateException:
+                            self.game_view.error("Posição inválida. Tente novamente")
+                            continue
+                        except UICancelException:
+                            return
                 else:
                     while True:
                         try:
@@ -88,8 +99,10 @@ class GameCtrl:
                             break
                         except InvalidCoordinateException:
                             continue
-
-        winner = game.main_loop(0)
+        try:
+            winner = game.main_loop(0)
+        except UICancelException:
+            return
 
         if winner == 0:
             self.game_view.msg(f"{p1.name} venceu")

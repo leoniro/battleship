@@ -4,27 +4,49 @@ skinparam classAttributeIconSize 0
 'left to right direction
 hide circle
 
-abstract class View {
+abstract class AbstractView {
     + __init__() {abstract}
-    + menu(text, options) {abstract}
-    + msg(text) {abstract}
-    + get_intput(validator) {abstract}
+    + menu(text, options) 
+    + multiple_choices(text, options)
+    + spinbox(text, options)
+    + msg(text)
+    + error(text)
+    + input_integet(validator, prompt)
+    + input(prompt)
+    + info_menu(col_names, data)
 }
 
 class GameView {
+    - text: str
+    - options: dict[int, str]
     + __init__()
-    + render(grid)
+    + text()
+    + options()
+    + draw_ui_grid(layout, grid)
+    + place_ship_menu(name, grid, ship_length)
+    + turn_menu(name, grid)
+    + turn_feedback_menu(name, grid)
+    + game_description_menu(games_data)
 }
 
 class ShipView {
+    - text: str
+    - options: dict[int, str]
     + __init__()
+    + text()
+    + options()
 }
 
 class PlayerView {
+    - text: str
+    - options: dict[int, str]
     + __init__()
+    + text()
+    + options()
+    + input_dob()
 }
 
-abstract class Player {
+abstract class AbstractPlayer {
     - name: str
     - score: int
     - date_of_birth: datetime
@@ -35,27 +57,86 @@ abstract class Player {
     + date_of_birth()
     + add_score(int)
     + play_move(grid, game_ctrl) {abstract}
-    + place_ship(game_ctrl) {abstract}
+    + place_ship(grid, game_ctrl) {abstract}
 }
 
 class HumanPlayer {
-    + __init__(name, dob)
+    + __init__(name)
     + play_move(grid, game_ctrl)
-    + place_ship(game_ctrl)
+    + place_ship(grid, game_ctrl)
     + coord2idx(coord)
 }
 
 class ComputerPlayer {
-    + __init__(name, dob)
+    + __init__(name)
     + play_move(grid, game_ctrl)
     + place_ship(game_ctrl)
 }
 
-Player <|-- HumanPlayer
-Player <|-- ComputerPlayer
+abstract class DAO {
+    - datasource: str
+    - cache: list
+    + __init__(path) {abstract}
+    - __dump()
+    - __load()
+    + add(obj)
+    + update(idx, obj)
+    + get(idx)
+    + remove(idx)
+}
 
-View <|-- ShipView
-View <|-- GameView
-View <|-- PlayerView
+class GameCtrl {
+    - player_ctrl: PlayerCtrl
+    - ship_ctrl: ShipCtrl
+    - game_view: GameView
+    - game_history: list[Game]
+    + __init__()
+    + player_ctrl()
+    + ship_ctrl()
+    + game_view()
+    + game_history()
+    + start()
+    + new_game()
+    + player_ranking()
+    + previous_games()
+    + add_game(game)
+}
+
+class PlayerCtrl {
+    - players: list[Player]
+    - player_view: PlayerView
+    - player_types = dict[int, function]
+    + __init__()
+    + players()
+    + players_view()
+    + player_types()
+    + start()
+    + add_player()
+    + list()
+    + modify_player()
+    + remove_player()
+}
+
+class ShipCtrl{
+    - ships: list[Ship]
+    - ship_view: ShipView
+    + __init__()
+    + ships()
+    + ship_view()
+    + start()
+    + add_ship(length)
+    + list()
+    + remove_ship(idx)
+}
+AbstractPlayer <|-- HumanPlayer
+AbstractPlayer <|-- ComputerPlayer
+
+AbstractView <|-- ShipView
+AbstractView <|-- GameView
+AbstractView <|-- PlayerView
+
+DAO <|-- GameCtrl
+DAO <|-- PlayerCtrl
+DAO <|-- ShipCtrl
 
 @enduml

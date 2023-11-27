@@ -70,7 +70,7 @@ class PlayerCtrl(DAO):
                         "Escolha o jogador a ser modificado:",
                         [p.name for p in self.players])
                     new_name = self.player_view.input("Digite o novo nome do jogador:")
-                    self.modify(old_name, new_name)
+                    self.modify_player(old_name, new_name)
                     self.player_view.msg("Nome alterado com sucesso")
                 except PlayerNotFoundException:
                     self.player_view.error("Jogador não existe")
@@ -115,17 +115,17 @@ class PlayerCtrl(DAO):
                 player.date_of_birth.strftime('%d-%m-%Y') if isinstance(player, HumanPlayer) else 'N/A'
             ])
         self.player_view.info_menu(col_names, data)
-        
 
-    def modify(self, old_name, new_name):
+    def modify_player(self, old_name, new_name):
         """Change player name"""
         if old_name not in [p.name for p in self.players]:
             raise PlayerNotFoundException
         if new_name in [p.name for p in self.players]:
             raise PlayerAlreadyExistsException
-        player = [p for p in self.players if p.name == old_name]
-        player = player[0]
+        idx = [p.name for p in self.players].index(old_name)
+        player = self.players[idx]
         player.name = new_name
+        super().update(idx, player)
 
     def remove_player(self, name):
         """Remove existing player"""

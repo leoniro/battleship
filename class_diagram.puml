@@ -25,9 +25,9 @@ class Game {
     + scores()
     + start_time()
     + end_time()
-    + main_loop(player)
-    + turn(player)
-    + log_move(player, x, y)
+    + main_loop(player_idx)
+    + turn(player_idx)
+    + log_move(player_idx, x, y)
     + idx2coord(x, y)
 }
 
@@ -45,6 +45,7 @@ class GameCtrl {
     + new_game()
     + player_ranking()
     + previous_games()
+    + add_game(game)
 }
 
 class GameView {
@@ -53,10 +54,11 @@ class GameView {
     + __init__()
     + text()
     + options()
-    + render(grid)
-    + menu(text, options)
-    + msg(text)
-    + get_intput(validator)
+    + draw_ui_grid(layout, grid)
+    + place_ship_menu(name, grid, ship_length)
+    + turn_menu(name, grid)
+    + turn_feedback_menu(name, grid)
+    + game_description_menu(games_data)
 }
 
 class Battlespace {
@@ -106,9 +108,9 @@ class ShipCtrl{
     + ships()
     + ship_view()
     + start()
-    + add()
+    + add_ship(length)
     + list()
-    + remove()
+    + remove_ship(idx)
 }
 
 class ShipView {
@@ -117,25 +119,24 @@ class ShipView {
     + __init__()
     + text()
     + options()
-    + menu(text, options)
-    + msg(text)
-    + get_intput(validator)
 }
 
 class PlayerCtrl {
     - players: list[Player]
     - player_view: PlayerView
+    - player_types = dict[int, function]
     + __init__()
     + players()
     + players_view()
+    + player_types()
     + start()
-    + add()
+    + add_player()
     + list()
-    + modify()
-    + remove()
+    + modify_player()
+    + remove_player()
 }
 
-abstract class Player {
+abstract class AbstractPlayer {
     - name: str
     - score: int
     - date_of_birth: datetime
@@ -146,7 +147,7 @@ abstract class Player {
     + date_of_birth()
     + add_score(int)
     + play_move(grid, game_ctrl) {abstract}
-    + place_ship(game_ctrl) {abstract}
+    + place_ship(grid, game_ctrl) {abstract}
 }
 
 class PlayerView {
@@ -155,16 +156,13 @@ class PlayerView {
     + __init__()
     + text()
     + options()
-    + input_dob(dob)
-    + menu(text, options)
-    + msg(text)
-    + get_intput(validator)
+    + input_dob()
 }
 
 class HumanPlayer {
     + __init__(name)
     + play_move(grid, game_ctrl)
-    + place_ship(game_ctrl)
+    + place_ship(grid, game_ctrl)
     + coord2idx(coord)
 }
 
@@ -174,7 +172,6 @@ class ComputerPlayer {
     + place_ship(game_ctrl)
 }
 
-
 GameCtrl "1" --> "1..*" Game : game_history <
 GameCtrl "1" <-- "1..*" Game : game_ctrl >
 GameCtrl "1" -r-> "1" GameView : game_view <
@@ -182,13 +179,13 @@ GameCtrl "1" -r-> "1" GameView : game_view <
 GameCtrl "1" -l-> "1" PlayerCtrl : player_ctrl <
 GameCtrl "1" --> "1" ShipCtrl : ship_ctrl <
 
-PlayerCtrl "1" --> "1..*" Player : players <
+PlayerCtrl "1" --> "1..*" AbstractPlayer : players <
 PlayerCtrl "1" --> "1" PlayerView : player_view <
 
-Game "1" o-- "2" Player : players <
+Game "1" o-- "2" AbstractPlayer : players <
 
-Player <|-- HumanPlayer
-Player <|-- ComputerPlayer
+AbstractPlayer <|-- HumanPlayer
+AbstractPlayer <|-- ComputerPlayer
 
 Game "1" *-- "2" Battlespace : battlespaces <
 

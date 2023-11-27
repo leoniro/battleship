@@ -6,14 +6,13 @@ from model.betterComputerPlayer import BetterComputerPlayer
 from exception.playerAlreadyExistsException import PlayerAlreadyExistsException
 from exception.playerNotFoundException import PlayerNotFoundException
 from exception.uiCancelException import UICancelException
+from dao.dao import DAO
 
-
-class PlayerCtrl:
+class PlayerCtrl(DAO):
     """Player controller class"""
     def __init__(self):
-        self.__players = [
-            ComputerPlayer("Computador", datetime.datetime(1970, 1, 1)),
-            HumanPlayer("Humano", datetime.datetime(1970, 1, 2))]
+        super().__init__('player.pkl')
+        self.__players = super().get()
         self.__player_view = PlayerView()
         self.__player_types = {
             0: HumanPlayer,
@@ -54,7 +53,7 @@ class PlayerCtrl:
                     dob = datetime.datetime(1970, 1, 1)
                     if player_type == 0:
                         dob = self.player_view.input_dob()
-                    self.add(name, player_type, dob)
+                    self.add_player(name, player_type, dob)
                     self.player_view.msg("Jogador adicionado com sucesso")
                 except PlayerAlreadyExistsException:
                     self.player_view.error("Jogador com esse nome já existe")
@@ -87,7 +86,7 @@ class PlayerCtrl:
                     name = self.player_view.multiple_choices(
                         "Escolha o jogador a ser removido:",
                         [ p.name for p in self.players])
-                    self.remove(name)
+                    self.remove_player(name)
                     self.player_view.msg("Jogador excluído com sucesso")
                 except PlayerNotFoundException:
                     self.player_view.error("Jogador não existe")
@@ -95,11 +94,11 @@ class PlayerCtrl:
                 except UICancelException:
                     continue
 
-    def add(self, name, player_type, dob):
+    def add_player(self, name, player_type, dob):
         """Add new player"""
         if name in [p.name for p in self.players]:
             raise PlayerAlreadyExistsException
-        self.players.append(self.player_types[player_type](name, dob))
+        super().add(self.player_types[player_type](name, dob))
 
     def list(self, query = "", ranked = False):
         """List or search for players"""
@@ -128,9 +127,9 @@ class PlayerCtrl:
         player = player[0]
         player.name = new_name
 
-    def remove(self, name):
+    def remove_player(self, name):
         """Remove existing player"""
         if name not in [p.name for p in self.players]:
             raise PlayerNotFoundException
         idx = [p.name for p in self.players].index(name)
-        self.players.pop(idx)
+        super().remove(idx)

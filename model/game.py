@@ -90,7 +90,7 @@ class Game:
             x, y = self.players[attacker].play_move(grid, self.game_ctrl)
             is_hit, is_sunk = self.battlespaces[defender].check_hit(x, y)
             grid = self.battlespaces[defender].opponent_vision()
-            self.game_ctrl.game_view.turn_feedback_menu(attacker_name, grid)
+            # self.game_ctrl.game_view.turn_feedback_menu(attacker_name, grid)
         self.log_move(attacker, x, y)
 
         # Report move result and tally scores

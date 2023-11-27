@@ -2,13 +2,15 @@ from model.ship import Ship
 from view.shipView import ShipView
 from exception.maximumShipsReachedException import MaximumShipsReachedException
 from exception.minimumShipsReachedException import MinimumShipsReachedException
+from exception.uiCancelException import UICancelException
+from dao.dao import DAO
 
 
-class ShipCtrl():
+class ShipCtrl(DAO):
     """Ship Controller class"""
     def __init__(self):
-        self.__ships = [Ship(1), Ship(1), Ship(1), Ship(2), Ship(2),
-                        Ship(3), Ship(3), Ship(4)]
+        super().__init__('ship.pkl')
+        self.__ships = super().get()
         self.__ship_view = ShipView()
 
     @property
@@ -24,48 +26,49 @@ class ShipCtrl():
     def start(self):
         """Main menu for ship CRUD"""
         while True:
-            choice, _ = self.ship_view.menu()
+            choice = self.ship_view.menu()
             if choice == 0:
                 return
             if choice == 1:
                 self.list()
             elif choice == 2:
-                self.ship_view.msg("Escolha o comprimento da embarcação (1 a 4):")
                 try:
-                    length = self.ship_view.input_integer()
-                    self.add(length)
+                    length = self.ship_view.spinbox('Escolha o tamanho da embarcação', range(1,5))
+                    self.add_ship(length)
                 except MaximumShipsReachedException:
                     self.ship_view.error("Quantidade máxima de embarcações atingida")
                 except ValueError:
                     self.ship_view.error("Tamanho inválido de embarcação")
+                except UICancelException:
+                    continue
             elif choice == 3:
-                # remove
-                self.list()
-                self.ship_view.msg("Digite o Id da embarcação a ser removida")
                 try:
-                    idx = self.ship_view.input_integer()
-                    self.remove(idx)
+                    idx = self.ship_view.multiple_choices(
+                        'Escolha a embarcação a ser removida', range(len(self.ships)))
+                    self.remove_ship(idx)
                     self.ship_view.msg("Removido com sucesso")
                 except MinimumShipsReachedException:
                     self.ship_view.error("Mínimo de embarcações atingido")
                 except IndexError:
                     self.ship_view.error("Id inválido")
 
-    def add(self, length):
+    def add_ship(self, length):
         """Add new ship"""
         if len(self.ships) >= 10:
             raise MaximumShipsReachedException("Máximo de 10 embarcações atingido")
         else:
-            self.ships.append(Ship(length))
+            super().add(Ship(length))
 
     def list(self):
         """List current ships"""
-        self.ship_view.msg("Id  Tam Tipo")
+        cols = ['Id', 'Tipo', 'Tamanho']
+        data = []
         for idx, ship in enumerate(self.ships):
-            self.ship_view.msg(f"{idx: 3d}{ship.length(): 4d} {ship.type}")
+            data.append([idx, str(ship.type), ship.length()])
+        self.ship_view.info_menu(cols, data)
 
-    def remove(self, idx):
+    def remove_ship(self, idx):
         """Remove existing ship"""
         if len(self.ships) <= 1:
             raise MinimumShipsReachedException("Mínimo de 1 embarcação atingido")
-        self.ships.pop(idx)
+        super().remove(idx)

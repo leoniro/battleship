@@ -2,17 +2,19 @@ from ctrl.shipCtrl import ShipCtrl
 from view.gameView import GameView
 from exception.invalidCoordinateException import InvalidCoordinateException
 from exception.uiCancelException import UICancelException
+from dao.dao import DAO
 
-
-class GameCtrl:
+class GameCtrl(DAO):
     """Game controller class"""
     def __init__(self):
         from ctrl.playerCtrl import PlayerCtrl
 
+        super().__init__('game.pkl')
+
         self.__player_ctrl = PlayerCtrl()
         self.__ship_ctrl = ShipCtrl()
         self.__game_view = GameView()
-        self.__game_history = []
+        self.__game_history = super().get()
 
     @property
     def player_ctrl(self):
@@ -72,7 +74,6 @@ class GameCtrl:
         except UICancelException:
             return
         game = Game(self, h, w, p1, p2, self.ship_ctrl.ships)
-        self.game_history.append(game)
 
         # place ships:
         for player_idx in range(2):
@@ -109,6 +110,11 @@ class GameCtrl:
         else:
             self.game_view.msg(f"{p2.name} venceu")
 
+        self.add_game(game)
+
+    def add_game(self, game):
+        super().add(game)
+
     def player_ranking(self):
         """List all registered players according to their score"""
         self.player_ctrl.list("", ranked = True)
@@ -117,26 +123,22 @@ class GameCtrl:
         """List previously played games"""
         from model.game import Game
 
-        name = self.game_view.input("Digite o nome do jogador de interesse:")
-        if name not in [p.name for p in self.player_ctrl.players]:
-            self.game_view.msg("Jogador não encontrado")
-            return
-        player = [p for p in self.player_ctrl.players if p.name == name]
-        player = player[0]
-        self.game_view.msg(f"Histórico de jogos de {player.name}:")
+        player_names = [p.name for p in self.player_ctrl.players]
+        try:
+            name = self.game_view.multiple_choices("Selecione o jogador de interesse:", player_names)
+        except UICancelException:
+            name = None
+        games_description = {}
         for idx, game in enumerate(self.game_history):
-            if player not in game.players:
+            if (name is not None) and name not in [p.name for p in game.players]:
                 continue
-            self.game_view.msg(f'JOGO {idx+1}:')
-            self.game_view.msg(f'Início: {game.start_time}')
-            self.game_view.msg(f'Fim: {game.end_time}')
-            self.game_view.msg(f'Jogador 1: {game.players[0].name}')
-            self.game_view.msg(f'Jogador 2: {game.players[1].name}')
-            self.game_view.msg(f'Pontuação do jogador 1: {game.scores[0]}')
-            self.game_view.msg(f'Pontuação do jogador 2: {game.scores[1]}')
-            self.game_view.msg('Tabuleiro do Jogador 1:')
-            self.game_view.render(game.battlespaces[0].grid)
-            self.game_view.msg('Tabuleiro do Jogador 2:')
-            self.game_view.render(game.battlespaces[1].grid)
-            self.game_view.msg(f'Movimentos jogados: {game.move_list}')
-            self.game_view.msg('\n')
+            current_game = (f"Jogo {idx}:\n"
+                            f"Início: {game.start_time.strftime('%d/%m/%Y %H:%M:%S')}\n"
+                            f"Fim: {game.end_time.strftime('%d/%m/%Y %H:%M:%S')}\n\n"
+                            f"Jogador 1: {game.players[0].name}\n"
+                            f"Pontuação: {game.scores[0]}\n\n"
+                            f"Jogador 2: {game.players[1].name}\n"
+                            f"Pontuação: {game.scores[1]}\n\n"
+                            f"Movimentos jogados: {game.move_list}")
+            games_description[idx] = current_game
+        self.game_view.game_description_menu(games_description)

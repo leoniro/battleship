@@ -82,3 +82,11 @@ class GameView(AbstractView):
         feedback_window = sg.Window('Batalha Naval').Layout(layout)
         feedback_window.Read()
         feedback_window.close()
+
+    def game_description_menu(self, games_data):
+        layout = [[sg.T('Jogos Encontrados:')]]
+        for k, v in games_data.items():
+            layout.append([sg.T(v)])
+        window = sg.Window('Batalha Naval').Layout(layout)
+        window.Read()
+        window.close()

@@ -13,6 +13,7 @@ class GameView(AbstractView):
             3: "Gerenciar Embarcações",
             4: "Ranking de Jogadores",
             5: "Histório de Partidas",
+            6: "Habilitar/Desabilitar feedback de jogada do computador",
             0: "Sair"}
 
     @property

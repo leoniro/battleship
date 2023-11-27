@@ -6,6 +6,8 @@ from dao.dao import DAO
 
 class GameCtrl(DAO):
     """Game controller class"""
+    turn_feedback = False
+
     def __init__(self):
         from ctrl.playerCtrl import PlayerCtrl
 
@@ -47,6 +49,7 @@ class GameCtrl(DAO):
                 return
             if choice == 1:
                 self.new_game()
+                self.player_ctrl.update()
             elif choice == 2:
                 self.player_ctrl.start()
             elif choice == 3:
@@ -55,6 +58,12 @@ class GameCtrl(DAO):
                 self.player_ranking()
             elif choice == 5:
                 self.previous_games()
+            elif choice == 6:
+                GameCtrl.turn_feedback = not GameCtrl.turn_feedback
+                if GameCtrl.turn_feedback:
+                    self.game_view.msg("Feedback de jogada do computador habilitado")
+                else:
+                    self.game_view.msg("Feedback de jogada do computador desabilitado")
 
     def new_game(self):
         """Set up a new game and start it"""

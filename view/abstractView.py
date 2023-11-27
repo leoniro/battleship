@@ -41,13 +41,13 @@ class AbstractView(ABC):
         """One-time window with multiple options"""
         layout = [[sg.Text(text)],
                   [sg.Listbox(values = options, key = 'choice', size = (30,3))],
-                  [sg.Submit(), sg.Cancel()]]
+                  [sg.OK(), sg.Cancel()]]
         listbox_window = sg.Window(text).Layout(layout)
         button, data = listbox_window.Read()
         listbox_window.close()
         if button == 'Cancel' or button is None:
             raise UICancelException
-        if button == 'Submit':
+        if button == 'OK':
             data = data['choice']
             return data[0]
 
@@ -55,40 +55,40 @@ class AbstractView(ABC):
         layout = [
             [sg.Text(text)],
             [sg.Spin(values = list(options), initial_value = options[0], key = 'spin')],
-            [sg.Submit(), sg.Cancel()]]
+            [sg.OK(), sg.Cancel()]]
         spin_window = sg.Window(text).Layout(layout)
         button, data = spin_window.Read()
         spin_window.close()
         if button == 'Cancel' or button is None:
             raise UICancelException
-        if button == 'Submit':
+        if button == 'OK':
             data = data['spin']
         return data
 
 
     def msg(self, text):
         """Info Box"""
-        layout = [[sg.Text(text)], [sg.Submit()]]
+        layout = [[sg.Text(text)], [sg.OK()]]
         window = sg.Window("Info").Layout(layout)
         window.Read()
         window.close()
 
     def error(self, text):
         """Error box"""
-        layout = [[sg.Text(text)], [sg.Submit()]]
+        layout = [[sg.Text(text)], [sg.OK()]]
         window = sg.Window("Erro").Layout(layout)
         window.Read()
         window.close()
 
     def input_integer(self, validator = None, prompt = ''):
         """Get input and tries to cast it to integer in validator"""
-        layout = [[sg.Text(prompt)], [sg.Input(key = 'input')], [sg.Submit(), sg.Cancel()]]
+        layout = [[sg.Text(prompt)], [sg.Input(key = 'input')], [sg.OK(), sg.Cancel()]]
         input_window = sg.Window(prompt).Layout(layout)
         button, data = input_window.Read()
         input_window.close()
         if button == 'Cancel' or button is None:
             raise UICancelException
-        if button == 'Submit':
+        if button == 'OK':
             data = data['input']
         try:
             data = int(data)
@@ -100,13 +100,13 @@ class AbstractView(ABC):
 
     def input(self, prompt = ''):
         """Get arbitrary input"""
-        layout = [[sg.Text(prompt)], [sg.Input(key = 'input')], [sg.Submit(), sg.Cancel()]]
+        layout = [[sg.Text(prompt)], [sg.Input(key = 'input')], [sg.OK(), sg.Cancel()]]
         input_window = sg.Window(prompt).Layout(layout)
         button, data = input_window.Read()
         input_window.close()
         if button == 'Cancel' or button is None:
             raise UICancelException
-        if button == 'Submit':
+        if button == 'OK':
             data = data['input']
             return data
         

@@ -138,7 +138,6 @@ class GameCtrl(DAO):
                             f"Jogador 1: {game.players[0].name}\n"
                             f"Pontuação: {game.scores[0]}\n\n"
                             f"Jogador 2: {game.players[1].name}\n"
-                            f"Pontuação: {game.scores[1]}\n\n"
-                            f"Movimentos jogados: {game.move_list}")
+                            f"Pontuação: {game.scores[1]}\n\n")
             games_description[idx] = current_game
         self.game_view.game_description_menu(games_description)
